@@ -1,0 +1,115 @@
+<div id="reportsPage">
+  <div class="row g-3">
+
+    <!-- ==== SIDEBAR JENIS LAPORAN ==== -->
+    <div class="col-lg-3">
+      <div class="page-card">
+        <div class="page-card-header">
+          <h5 class="page-card-title">
+            <i class="bi bi-list-check me-2"></i>Jenis Laporan
+          </h5>
+        </div>
+        <div class="report-type-list" id="reportTypeList">
+          <button class="report-type-item active" data-report="bookCatalog">
+            <i class="bi bi-book"></i>
+            <div>
+              <div class="fw-semibold small">Katalog Buku</div>
+              <div class="text-muted" style="font-size:10.5px">Daftar lengkap koleksi</div>
+            </div>
+          </button>
+          <button class="report-type-item" data-report="activeLoans">
+            <i class="bi bi-journal-arrow-up"></i>
+            <div>
+              <div class="fw-semibold small">Buku Dipinjam</div>
+              <div class="text-muted" style="font-size:10.5px">Transaksi aktif</div>
+            </div>
+          </button>
+          <button class="report-type-item" data-report="overdue">
+            <i class="bi bi-exclamation-triangle"></i>
+            <div>
+              <div class="fw-semibold small">Keterlambatan</div>
+              <div class="text-muted" style="font-size:10.5px">Buku lewat jatuh tempo</div>
+            </div>
+          </button>
+          <button class="report-type-item" data-report="studentHistory">
+            <i class="bi bi-person-lines-fill"></i>
+            <div>
+              <div class="fw-semibold small">Riwayat Siswa</div>
+              <div class="text-muted" style="font-size:10.5px">Peminjaman per siswa</div>
+            </div>
+          </button>
+          <button class="report-type-item" data-report="byClass">
+            <i class="bi bi-diagram-3"></i>
+            <div>
+              <div class="fw-semibold small">Rekap per Kelas</div>
+              <div class="text-muted" style="font-size:10.5px">Statistik peminjaman kelas</div>
+            </div>
+          </button>
+          <button class="report-type-item" data-report="damagedLost">
+            <i class="bi bi-tools"></i>
+            <div>
+              <div class="fw-semibold small">Koleksi Rusak/Hilang</div>
+              <div class="text-muted" style="font-size:10.5px">Buku tidak layak</div>
+            </div>
+          </button>
+          <button class="report-type-item" data-report="outstandingFines">
+            <i class="bi bi-cash-coin"></i>
+            <div>
+              <div class="fw-semibold small">Denda Belum Lunas</div>
+              <div class="text-muted" style="font-size:10.5px">Tunggakan anggota</div>
+            </div>
+          </button>
+          <button class="report-type-item" data-report="reservations">
+            <i class="bi bi-hourglass-split"></i>
+            <div>
+              <div class="fw-semibold small">Reservasi Buku</div>
+              <div class="text-muted" style="font-size:10.5px">Antrean & riwayat pesan</div>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==== AREA UTAMA ==== -->
+    <div class="col-lg-9">
+
+      <!-- Filter kontekstual -->
+      <div class="page-card mb-3" id="reportFiltersCard">
+        <div class="page-card-body">
+          <div class="row g-2 align-items-center" id="reportFilters">
+            <!-- Filter akan di-render sesuai jenis laporan -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div class="page-card">
+        <div class="page-card-header">
+          <h5 class="page-card-title" id="reportTitle">Katalog Buku</h5>
+          <div class="d-flex gap-2">
+            <span class="badge bg-secondary" id="reportRowCount">0 baris</span>
+            <button class="btn btn-sm btn-outline-success" id="btnExportCsv" disabled>
+              <i class="bi bi-filetype-csv me-1"></i>CSV
+            </button>
+            <button class="btn btn-sm btn-outline-danger" id="btnExportPdf" disabled>
+              <i class="bi bi-file-earmark-pdf me-1"></i>PDF
+            </button>
+            <button class="btn btn-sm btn-outline-primary" id="btnRefreshReport">
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+          </div>
+        </div>
+        <div class="table-responsive" style="max-height:560px;overflow-y:auto">
+          <table class="table table-hover table-sm align-middle mb-0" id="reportTable">
+            <thead class="table-light" id="reportThead">
+              <tr><th class="text-center text-muted">Pilih jenis laporan di kiri</th></tr>
+            </thead>
+            <tbody id="reportTbody">
+              <tr><td class="empty-row">Memuat...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

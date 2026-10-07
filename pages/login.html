@@ -1,0 +1,113 @@
+<div class="login-wrapper">
+  <div class="login-card card shadow-lg">
+    <div class="card-body p-4 p-md-5">
+      <div class="text-center mb-4">
+        <div class="login-logo" id="loginLogoIcon">
+          <i class="bi bi-book-half"></i>
+        </div>
+        <img id="loginLogoImg" src="" alt="Logo" class="login-logo-img d-none">
+        <h4 class="mt-3 mb-1" id="loginSchoolName">Memuat...</h4>
+        <p class="text-muted small mb-0" id="loginLibraryName"></p>
+        <p class="text-muted small mb-0" id="loginSchoolAddress"></p>
+      </div>
+
+      <div id="loginAlert"></div>
+
+      <form id="loginForm" onsubmit="return false;">
+        <div class="mb-3">
+          <label class="form-label small">Email</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+            <input type="email" class="form-control" id="loginEmail"
+                   placeholder="nama@email.com" autocomplete="username" required>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label small">Password</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+            <input type="password" class="form-control" id="loginPassword"
+                   placeholder="Password" autocomplete="current-password" required>
+            <button class="btn btn-outline-secondary" type="button"
+                    id="togglePasswordBtn">
+              <i class="bi bi-eye" id="togglePasswordIcon"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 mb-3" id="loginSubmitBtn">
+          <i class="bi bi-box-arrow-in-right me-2"></i>Masuk
+        </button>
+      </form>
+
+      <div class="text-center text-muted small mb-3">atau</div>
+
+      <button type="button" class="btn btn-outline-danger w-100"
+              id="loginGoogleBtn">
+        <i class="bi bi-google me-2"></i>Masuk dengan Google
+      </button>
+
+      <!-- Info tambahan -->
+      <div class="text-center mt-2 small text-muted" id="googleLoginHint"
+           style="font-size:11px; display:none;">
+        <i class="bi bi-info-circle me-1"></i>
+        Masukkan email Google yang terdaftar di sistem
+      </div>
+
+      <div class="text-center mt-4">
+        <small class="text-muted">
+          Lupa password? Hubungi pustakawan / administrator.
+        </small>
+      </div>
+    </div>
+  </div>
+
+    <!-- ============================================================
+       MODAL: LOGIN GOOGLE (input email)
+       ============================================================ -->
+  <div class="modal fade" id="googleLoginModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6 class="modal-title">
+            <i class="bi bi-google me-1" style="color:#ea4335"></i>
+            Login dengan Google
+          </h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-info small py-2 mb-3">
+            <i class="bi bi-info-circle me-1"></i>
+            Masukkan <strong>email Google</strong> yang sudah terdaftar di sistem
+            perpustakaan. Hubungi administrator jika belum terdaftar.
+          </div>
+
+          <label class="form-label small">Email Google</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+            <input type="email" class="form-control" id="googleLoginEmail"
+                   placeholder="nama@gmail.com" autocomplete="email" autofocus>
+          </div>
+          <small class="text-muted">
+            Contoh: <code>andi@gmail.com</code> atau <code>guru@sekolah.sch.id</code>
+          </small>
+
+          <div id="googleLoginAlert" class="mt-3"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm"
+                  data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-danger btn-sm"
+                  id="btnSubmitGoogleLogin">
+            <i class="bi bi-box-arrow-in-right me-1"></i>Login
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="text-center mt-3 small text-muted">
+    <span id="loginAppVersion"></span>
+  </div>
+</div>

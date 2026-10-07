@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Perpustakaan Digital</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+
+  <style>
+  /* ===== SPLASH SCREEN ===== */
+  .splash-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1e40af 0%, #4285f4 50%, #34a853 100%);
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+  }
+  .splash-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .splash-content {
+    text-align: center;
+    color: #fff;
+    padding: 20px;
+    max-width: 400px;
+    animation: splashFadeIn 0.6s ease;
+  }
+  @keyframes splashFadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .splash-logo-wrap {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 20px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    animation: splashLogoPulse 2s ease infinite;
+  }
+  @keyframes splashLogoPulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.05); }
+  }
+
+    .splash-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 16px;
+    background: #fff;
+    padding: 8px;
+    }
+  .splash-logo-icon {
+    font-size: 52px;
+    color: #fff;
+  }
+
+  .splash-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 6px;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  .splash-subtitle {
+    font-size: 13px;
+    margin: 0 0 24px;
+    opacity: 0.9;
+  }
+
+  .splash-spinner {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .spinner-dot {
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border-radius: 50%;
+    animation: splashBounce 1.4s ease-in-out infinite both;
+  }
+  .spinner-dot:nth-child(1) { animation-delay: -0.32s; }
+  .spinner-dot:nth-child(2) { animation-delay: -0.16s; }
+  .spinner-dot:nth-child(3) { animation-delay: 0s; }
+
+  @keyframes splashBounce {
+    0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+    40%           { transform: scale(1.1); opacity: 1; }
+  }
+
+  .splash-status {
+    font-size: 11.5px;
+    opacity: 0.75;
+    margin: 0;
+    letter-spacing: 0.3px;
+  }
+</style>
+
+</head>
+<body>
+
+<!-- ====== SPLASH SCREEN ====== -->
+<div id="splashScreen" class="splash-screen">
+  <div class="splash-content">
+    <div class="splash-logo-wrap">
+      <img id="splashLogoImg" alt="Logo" class="splash-logo d-none">
+      <div id="splashLogoIcon" class="splash-logo-icon">
+        <i class="bi bi-book-half"></i>
+      </div>
+    </div>
+    <h1 class="splash-title" id="splashTitle">Memuat...</h1>
+    <p class="splash-subtitle" id="splashSubtitle">Perpustakaan Digital</p>
+    <div class="splash-spinner">
+      <div class="spinner-dot"></div>
+      <div class="spinner-dot"></div>
+      <div class="spinner-dot"></div>
+    </div>
+    <p class="splash-status" id="splashStatus">Menyiapkan aplikasi...</p>
+  </div>
+</div>
+
+<!-- ====== GLOBAL LOADER ====== -->
+<div id="globalLoader" class="global-loader d-none">
+  <div class="loader-box">
+    <div class="spinner-border text-primary" role="status"></div>
+    <div class="loader-text">Memuat...</div>
+  </div>
+</div>
+
+<div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3"></div>
+
+<div id="app"></div>
+
+<div id="templates" style="display:none"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+
+<script>
+  // ============================================================
+  // CONFIG
+  // ============================================================
+  window.APP_CONFIG = {
+    API_URL: 'https://script.google.com/macros/s/AKfycbwz7FURI0DxLtNns9bEdM-esTMsSpSienJrHEUGoDbdavAOEk2FtcHCPwR-zWCR7_RYEw/exec',
+    TEMPLATES: [
+      { id: 'tpl-login',            path: 'pages/login.html' },
+      { id: 'tpl-sidebar',          path: 'pages/sidebar.html' },
+      { id: 'tpl-page-dashboard',   path: 'pages/dashboard.html' },
+      { id: 'tpl-page-books',       path: 'pages/books.html' },
+      { id: 'tpl-page-members',     path: 'pages/members.html' },
+      { id: 'tpl-page-loans',       path: 'pages/loans.html' },
+      { id: 'tpl-page-returns',     path: 'pages/returns.html' },
+      { id: 'tpl-page-fines',       path: 'pages/fines.html' },
+      { id: 'tpl-page-reservations',path: 'pages/reservations.html' },
+      { id: 'tpl-page-reports',     path: 'pages/reports.html' },
+      { id: 'tpl-page-settings',    path: 'pages/settings.html' },
+      { id: 'tpl-page-card',        path: 'pages/card.html' },
+      { id: 'tpl-page-403',         path: 'pages/forbidden.html' }
+    ]
+  };
+  console.log('✅ APP_CONFIG ready');
+</script>
+
+<!-- PENTING: load scripts.js DULU, kemudian baru panggil fungsi -->
+<script src="assets/js/scripts.js"></script>
+
+<script>
+  // ============================================================
+  // LOAD TEMPLATES + INIT APP + SPLASH SCREEN
+  // Blok ini DIJAMIN jalan SETELAH scripts.js selesai karena
+  // tag <script src="scripts.js"> di atas bersifat blocking.
+  // ============================================================
+  (async function() {
+    const splash = document.getElementById('splashScreen');
+    const splashTitle = document.getElementById('splashTitle');
+    const splashSubtitle = document.getElementById('splashSubtitle');
+    const splashStatus = document.getElementById('splashStatus');
+    const splashLogoImg = document.getElementById('splashLogoImg');
+    const splashLogoIcon = document.getElementById('splashLogoIcon');
+
+    function setSplashStatus(msg) {
+      if (splashStatus) splashStatus.textContent = msg;
+    }
+
+    // === BONUS: Cek cache logo dari refresh sebelumnya ===
+  try {
+    const cachedLogo = sessionStorage.getItem('splash_logo_url');
+    const cachedSchool = sessionStorage.getItem('splash_school_name');
+    const cachedLibrary = sessionStorage.getItem('splash_library_name');
+
+    if (cachedLogo && splashLogoImg && splashLogoIcon) {
+      splashLogoImg.src = cachedLogo;
+      splashLogoImg.classList.remove('d-none');
+      splashLogoIcon.classList.add('d-none');
+    }
+    if (cachedSchool && splashTitle) splashTitle.textContent = cachedSchool;
+    if (cachedLibrary && splashSubtitle) splashSubtitle.textContent = cachedLibrary;
+
+    console.log('⚡ Splash pakai cache (refresh cepat)');
+  } catch (e) {
+    // sessionStorage tidak tersedia, lanjut normal
+  }
+
+    // 1. Load templates
+    console.log('📦 Loading templates...');
+    setSplashStatus('Memuat antarmuka...');
+    const container = document.getElementById('templates');
+
+    for (const tpl of window.APP_CONFIG.TEMPLATES) {
+      try {
+        const res = await fetch(tpl.path);
+        const html = await res.text();
+        const el = document.createElement('template');
+        el.id = tpl.id;
+        el.innerHTML = html;
+        container.appendChild(el);
+      } catch (e) {
+        console.error('❌ Template gagal: ' + tpl.path, e);
+      }
+    }
+    console.log('✅ Templates loaded:', container.children.length);
+
+    // 2. Cek App
+    if (typeof App === 'undefined') {
+      setSplashStatus('❌ Gagal memuat aplikasi');
+      console.error('❌ App undefined');
+      return;
+    }
+    console.log('🔍 typeof App:', typeof window.App);
+
+    function hideSplash() {
+      setSplashStatus('Siap!');
+      splash.classList.add('hidden');
+      setTimeout(function() {
+        if (splash.parentNode) splash.parentNode.removeChild(splash);
+      }, 600);
+    }
+
+    if (window._appInited) {
+      console.log('ℹ️ App sudah diinit, sembunyikan splash saja');
+      hideSplash();
+      return;
+    }
+    window._appInited = true;
+
+    // 3. Init App
+    console.log('🚀 Memanggil App.init()');
+    setSplashStatus('Menghubungkan ke server...');
+
+    try {
+      await App.init();
+      console.log('✅ App initialized');
+
+      // Update splash dengan identitas sekolah
+      if (App.publicConfig) {
+        if (App.publicConfig.schoolName) {
+          splashTitle.textContent = App.publicConfig.schoolName;
+        }
+        if (App.publicConfig.libraryName) {
+          splashSubtitle.textContent = App.publicConfig.libraryName;
+        }
+        if (App.publicConfig.logoUrl && splashLogoImg && splashLogoIcon) {
+          splashLogoImg.src = App.publicConfig.logoUrl;
+          splashLogoImg.classList.remove('d-none');
+          splashLogoIcon.classList.add('d-none');
+          splashLogoImg.onerror = function() {
+            splashLogoImg.classList.add('d-none');
+            splashLogoIcon.classList.remove('d-none');
+          };
+        }
+        // === Save ke cache untuk refresh berikutnya ===
+        try {
+        if (App.publicConfig.logoUrl) {
+            sessionStorage.setItem('splash_logo_url', App.publicConfig.logoUrl);
+        }
+        if (App.publicConfig.schoolName) {
+            sessionStorage.setItem('splash_school_name', App.publicConfig.schoolName);
+        }
+        if (App.publicConfig.libraryName) {
+            sessionStorage.setItem('splash_library_name', App.publicConfig.libraryName);
+        }
+        } catch (e) {}
+      }
+
+      // 4. Sembunyikan splash screen SETELAH semua render
+      setSplashStatus('Siap!');
+      setTimeout(function() {
+        splash.classList.add('hidden');
+        // Hapus elemen setelah fade selesai
+        setTimeout(function() {
+          if (splash.parentNode) splash.parentNode.removeChild(splash);
+        }, 600);
+      }, 400); // delay kecil biar user lihat "Siap!"
+
+    } catch (e) {
+      console.error('❌ App.init error:', e);
+      setSplashStatus('❌ Gagal: ' + e.message);
+      // Tetap hilangkan splash setelah 3 detik supaya user bisa lihat error di console
+      setTimeout(function() {
+        splash.classList.add('hidden');
+      }, 3000);
+    }
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+<div id="returnsPage">
+
+  <ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+      <button class="nav-link active" id="tabProcessReturn" data-bs-toggle="tab"
+              data-bs-target="#paneProcessReturn" type="button" role="tab">
+        <i class="bi bi-arrow-return-left me-1"></i>Proses Pengembalian
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" id="tabReturnHistory" data-bs-toggle="tab"
+              data-bs-target="#paneReturnHistory" type="button" role="tab">
+        <i class="bi bi-clock-history me-1"></i>Riwayat Pengembalian
+      </button>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+
+    <!-- ===== TAB 1: PROSES ===== -->
+    <div class="tab-pane fade show active" id="paneProcessReturn" role="tabpanel">
+      <div class="row g-3">
+
+        <!-- ==== KIRI: CARI ==== -->
+        <div class="col-lg-5">
+          <div class="page-card h-100">
+            <div class="page-card-header">
+              <h5 class="page-card-title">
+                <i class="bi bi-search me-2"></i>Cari Transaksi
+              </h5>
+            </div>
+            <div class="page-card-body">
+              <div class="position-relative mb-3">
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text bg-white"><i class="bi bi-upc-scan"></i></span>
+                  <input type="text" class="form-control" id="returnSearchInput"
+                         placeholder="Scan barcode atau cari no. transaksi / nama..."
+                         autocomplete="off">
+                </div>
+                <div id="returnSearchResults" class="search-dropdown d-none"></div>
+              </div>
+
+              <div class="alert alert-info small py-2">
+                <i class="bi bi-info-circle me-1"></i>
+                Bisa input <strong>nomor transaksi</strong>, <strong>nama peminjam</strong>,
+                atau <strong>scan barcode</strong> buku.
+              </div>
+
+              <!-- List buku yang ditemukan -->
+              <div id="returnBookList"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==== KANAN: FORM PENGEMBALIAN ==== -->
+        <div class="col-lg-7">
+          <div class="page-card h-100">
+            <div class="page-card-header">
+              <h5 class="page-card-title">
+                <i class="bi bi-clipboard-check me-2"></i>Form Pengembalian
+              </h5>
+            </div>
+            <div class="page-card-body" id="returnFormArea">
+              <div class="empty-cart text-center py-5">
+                <i class="bi bi-arrow-left-circle" style="font-size:48px;color:#d1d5db"></i>
+                <div class="text-muted mt-2">
+                  Pilih buku dari daftar di kiri untuk memproses pengembalian
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TAB 2: RIWAYAT ===== -->
+    <div class="tab-pane fade" id="paneReturnHistory" role="tabpanel">
+      <div class="page-card mb-3">
+        <div class="page-card-body">
+          <div class="row g-2">
+            <div class="col-md-4">
+              <label class="form-label small mb-1">Dari Tanggal</label>
+              <input type="date" class="form-control form-control-sm" id="returnFromDate">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small mb-1">Sampai Tanggal</label>
+              <input type="date" class="form-control form-control-sm" id="returnToDate">
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+              <button class="btn btn-sm btn-primary w-100" id="btnFilterReturns">
+                <i class="bi bi-funnel me-1"></i>Filter
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-card">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>No. Return</th>
+                <th>Tanggal</th>
+                <th>Judul Buku</th>
+                <th>Kondisi</th>
+                <th class="text-center">Terlambat</th>
+                <th class="text-end">Denda</th>
+              </tr>
+            </thead>
+            <tbody id="returnsTableBody">
+              <tr><td colspan="6" class="empty-row">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="page-card-header border-top">
+          <div class="d-flex justify-content-between align-items-center w-100">
+            <small class="text-muted" id="returnsInfo"></small>
+            <nav><ul class="pagination pagination-sm mb-0" id="returnsPagination"></ul></nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

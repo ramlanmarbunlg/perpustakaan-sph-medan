@@ -1,0 +1,204 @@
+<div id="reservationsPage">
+    <div id="reservationAlertArea" style="display:none" class="mb-3"></div>
+  <ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+      <button class="nav-link active" id="tabActiveRes" data-bs-toggle="tab"
+              data-bs-target="#paneActiveRes" type="button">
+        <i class="bi bi-hourglass-split me-1"></i>Antrean Aktif
+        <span class="badge bg-secondary ms-1" id="tabActiveResCount">0</span>
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" id="tabHistoryRes" data-bs-toggle="tab"
+              data-bs-target="#paneHistoryRes" type="button">
+        <i class="bi bi-clock-history me-1"></i>Riwayat
+      </button>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+
+    <!-- ===== TAB 1: AKTIF ===== -->
+    <div class="tab-pane fade show active" id="paneActiveRes" role="tabpanel">
+      <div class="page-card mb-3">
+        <div class="page-card-body">
+          <div class="row g-2 align-items-center mb-2">
+            <div class="col-md-4">
+              <div class="input-group input-group-sm">
+                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" id="resSearchInput"
+                       placeholder="Cari nomor reservasi atau nama pemesan...">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <select class="form-select form-select-sm" id="resStatusFilter">
+                <option value="">Semua Status</option>
+                <option value="WAITING">Menunggu (WAITING)</option>
+                <option value="READY" selected>Siap Diambil (READY)</option>
+                <option value="FULFILLED">Terpenuhi (FULFILLED)</option>
+                <option value="CANCELLED">Dibatalkan (CANCELLED)</option>
+                <option value="EXPIRED">Kadaluarsa (EXPIRED)</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <input type="date" class="form-control form-control-sm" id="resFromDate"
+                     title="Dari tanggal">
+            </div>
+            <div class="col-md-2">
+              <input type="date" class="form-control form-control-sm" id="resToDate"
+                     title="Sampai tanggal">
+            </div>
+            <div class="col-md-1 text-end">
+              <button class="btn btn-sm btn-outline-secondary w-100" id="btnRefreshRes"
+                      title="Refresh">
+                <i class="bi bi-arrow-clockwise"></i>
+              </button>
+            </div>
+          </div>
+          <div class="row g-2">
+            <div class="col-12 text-end">
+              <button class="btn btn-sm btn-outline-secondary me-1" onclick="ReservationsPage.clearDateFilter()">
+                <i class="bi bi-x-circle me-1"></i>Reset Tanggal
+              </button>
+              <button class="btn btn-sm btn-primary" id="btnAddReservation">
+                <i class="bi bi-plus-lg me-1"></i>Reservasi Baru
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-card">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th width="60" class="text-center">Antrean</th>
+                <th>No. Reservasi</th>
+                <th>Pemesan</th>
+                <th>Buku</th>
+                <th>Tgl Pesan</th>
+                <th>Status</th>
+                <th>Berlaku s/d</th>
+                <th width="150" class="text-end">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="resTableBody">
+              <tr><td colspan="8" class="empty-row">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TAB 2: RIWAYAT ===== -->
+    <div class="tab-pane fade" id="paneHistoryRes" role="tabpanel">
+      <div class="page-card mb-3">
+        <div class="page-card-body">
+          <div class="row g-2">
+            <div class="col-md-4">
+              <select class="form-select form-select-sm" id="resHistoryFilter">
+                <option value="">Semua Status</option>
+                <option value="FULFILLED">Terpenuhi (FULFILLED)</option>
+                <option value="CANCELLED">Dibatalkan (CANCELLED)</option>
+                <option value="EXPIRED">Kadaluarsa (EXPIRED)</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <button class="btn btn-sm btn-primary w-100" id="btnFilterHistory">
+                <i class="bi bi-funnel me-1"></i>Filter
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-card">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>No. Reservasi</th>
+                <th>Pemesan</th>
+                <th>Buku</th>
+                <th>Tgl Pesan</th>
+                <th>Status</th>
+                <th>Diselesaikan</th>
+              </tr>
+            </thead>
+            <tbody id="resHistoryTableBody">
+              <tr><td colspan="6" class="empty-row">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: RESERVASI BARU
+     ============================================================ -->
+<div class="modal fade" id="reservationFormModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Reservasi Buku Baru</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+
+        <!-- Tipe pemesan -->
+        <div class="btn-group w-100 mb-3" role="group">
+          <input type="radio" class="btn-check" name="resBorrowerType" id="resBtStudent" value="STUDENT" checked>
+          <label class="btn btn-outline-primary btn-sm" for="resBtStudent">
+            <i class="bi bi-people me-1"></i>Siswa
+          </label>
+          <input type="radio" class="btn-check" name="resBorrowerType" id="resBtStaff" value="STAFF">
+          <label class="btn btn-outline-primary btn-sm" for="resBtStaff">
+            <i class="bi bi-person-badge me-1"></i>Guru/Staf
+          </label>
+        </div>
+
+        <!-- Cari pemesan -->
+        <div class="mb-3">
+          <label class="form-label small">Pemesan <span class="text-danger">*</span></label>
+          <div class="position-relative">
+            <div class="input-group input-group-sm">
+              <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+              <input type="text" class="form-control" id="resBorrowerSearch"
+                     placeholder="Cari nama atau NIS/NIP..." autocomplete="off">
+            </div>
+            <div id="resBorrowerResults" class="search-dropdown d-none"></div>
+          </div>
+          <div id="resBorrowerCard" class="mt-2 d-none"></div>
+        </div>
+
+        <!-- Cari buku -->
+        <div class="mb-3">
+          <label class="form-label small">Buku yang Direservasi <span class="text-danger">*</span></label>
+          <div class="position-relative">
+            <div class="input-group input-group-sm">
+              <span class="input-group-text bg-white"><i class="bi bi-book"></i></span>
+              <input type="text" class="form-control" id="resBookSearch"
+                     placeholder="Cari judul buku..." autocomplete="off">
+            </div>
+            <div id="resBookResults" class="search-dropdown d-none"></div>
+          </div>
+          <div id="resBookCard" class="mt-2 d-none"></div>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label small">Catatan (opsional)</label>
+          <textarea class="form-control form-control-sm" id="resNotes" rows="2"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-primary" id="btnSubmitReservation">
+          <i class="bi bi-check-lg me-1"></i>Buat Reservasi
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

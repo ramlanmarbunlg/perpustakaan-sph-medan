@@ -1,0 +1,845 @@
+<div id="settingsPage">
+
+  <ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+      <button class="nav-link active" id="tabConfig" data-bs-toggle="tab"
+              data-bs-target="#paneConfig" type="button">
+        <i class="bi bi-sliders me-1"></i>Konfigurasi
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" id="tabUsers" data-bs-toggle="tab"
+              data-bs-target="#paneUsers" type="button">
+        <i class="bi bi-people me-1"></i>Pengguna
+        <span class="badge bg-secondary ms-1" id="tabUsersCount">0</span>
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" id="tabRoles" data-bs-toggle="tab"
+              data-bs-target="#paneRoles" type="button">
+        <i class="bi bi-shield-lock me-1"></i>Role & Permission
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" id="tabGrades" data-bs-toggle="tab"
+              data-bs-target="#paneGrades" type="button">
+        <i class="bi bi-mortarboard me-1"></i>Tingkat Kelas
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" id="tabInfo" data-bs-toggle="tab"
+              data-bs-target="#paneInfo" type="button">
+        <i class="bi bi-info-circle me-1"></i>Info Sistem
+      </button>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+
+    <!-- ============================================================
+         TAB 1: KONFIGURASI
+         ============================================================ -->
+    <div class="tab-pane fade show active" id="paneConfig" role="tabpanel">
+      <div class="row g-3">
+
+        <!-- ==== IDENTITAS ==== -->
+        <div class="col-lg-6">
+          <div class="page-card h-100">
+            <div class="page-card-header">
+              <h5 class="page-card-title">
+                <i class="bi bi-building me-2"></i>Identitas Sekolah
+              </h5>
+              <button class="btn btn-sm btn-primary" onclick="SettingsPage.saveGroup('identity')">
+                <i class="bi bi-check-lg me-1"></i>Simpan
+              </button>
+            </div>
+            <div class="page-card-body">
+              <div class="row g-3">
+
+                <!-- ==== LOGO (kiri) ==== -->
+                <div class="col-md-4 col-12">
+                  <label class="form-label small">Logo Sekolah</label>
+                  <div class="logo-upload-wrap" id="logoPreviewWrap">
+                    <img id="logoPreviewImg" src="" alt="" class="d-none">
+                    <div class="logo-placeholder" id="logoPlaceholder">
+                      <i class="bi bi-image"></i>
+                      <div class="small text-muted mt-1">Belum ada</div>
+                    </div>
+                  </div>
+                  <div class="mt-2 d-grid gap-1">
+                    <label class="btn btn-sm btn-outline-primary mb-0">
+                      <i class="bi bi-upload me-1"></i>Upload
+                      <input type="file" id="logoFileInput" accept="image/*"
+                             style="display:none" onchange="SettingsPage.onLogoFile(event)">
+                    </label>
+                    <button type="button" class="btn btn-sm btn-outline-secondary"
+                            onclick="SettingsPage.onLogoUrl()">
+                      <i class="bi bi-link-45deg me-1"></i>URL
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-danger d-none"
+                            id="logoRemoveBtn"
+                            onclick="SettingsPage.removeLogo()">
+                      <i class="bi bi-trash me-1"></i>Hapus
+                    </button>
+                  </div>
+                  <input type="hidden" id="cfg_SCHOOL_LOGO_URL">
+                  <small class="text-muted d-block mt-1" id="logoStatusText"
+                         style="font-size:11px">Max 1MB • PNG/JPG/SVG</small>
+                </div>
+
+                <!-- ==== FIELD (kanan) ==== -->
+                <div class="col-md-8 col-12">
+                  <div class="mb-2">
+                    <label class="form-label small">Nama Sekolah <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control form-control-sm" id="cfg_SCHOOL_NAME">
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label small">Nama Perpustakaan <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control form-control-sm" id="cfg_LIBRARY_NAME">
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label small">Alamat Sekolah</label>
+                    <input type="text" class="form-control form-control-sm" id="cfg_SCHOOL_ADDRESS"
+                           placeholder="Jl. Pendidikan No. 123">
+                  </div>
+                  <div class="row g-2 mb-2">
+                    <div class="col-6">
+                      <label class="form-label small">Kota / Kabupaten</label>
+                      <input type="text" class="form-control form-control-sm" id="cfg_SCHOOL_CITY"
+                             placeholder="Medan">
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label small">Tahun Ajaran</label>
+                      <input type="text" class="form-control form-control-sm" id="cfg_SCHOOL_YEAR"
+                             placeholder="2026/2027">
+                    </div>
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label small">Nama Kepala Perpustakaan</label>
+                    <input type="text" class="form-control form-control-sm" id="cfg_LIBRARY_HEAD_NAME"
+                           placeholder="Contoh: Ibu Rina, S.Pd.">
+                  </div>
+                  <div class="mb-0">
+                    <label class="form-label small">Zona Waktu</label>
+                    <input type="text" class="form-control form-control-sm" id="cfg_APP_TIMEZONE"
+                           placeholder="Asia/Jakarta">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==== POLA BARCODE & INVENTARIS ==== -->
+        <div class="col-lg-6">
+          <div class="page-card h-100">
+            <div class="page-card-header">
+              <h5 class="page-card-title">
+                <i class="bi bi-upc-scan me-2"></i>Pola Barcode & No. Inventaris
+              </h5>
+              <button class="btn btn-sm btn-primary" onclick="SettingsPage.saveGroup('pattern')">
+                <i class="bi bi-check-lg me-1"></i>Simpan
+              </button>
+            </div>
+            <div class="page-card-body">
+              <div class="alert alert-info small py-2 mb-3">
+                <i class="bi bi-info-circle me-1"></i>
+                <strong>Placeholder:</strong>
+                <code>{PREFIX}</code> <code>{YY}</code> <code>{YYYY}</code>
+                <code>{MM}</code> <code>{SEQ}</code> <code>{SEQ3}</code>
+                <code>{SEQ4}</code> <code>{SEQ6}</code> <code>{SOURCE}</code>
+              </div>
+
+              <div class="mb-2">
+                <label class="form-label small">Prefix Barcode</label>
+                <input type="text" class="form-control form-control-sm" id="cfg_BOOK_CODE_PREFIX"
+                       placeholder="LIB">
+                <small class="text-muted">Contoh: LIB, BK, SPH</small>
+              </div>
+
+              <div class="mb-2">
+                <label class="form-label small">Pola Barcode</label>
+                <input type="text" class="form-control form-control-sm" id="cfg_BARCODE_PATTERN"
+                       placeholder="{PREFIX}{YY}{SEQ4}">
+                <small class="text-muted">
+                  Contoh: <code>{PREFIX}{YY}{SEQ4}</code> → <code>LIB26000001</code>
+                </small>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label small">Pola No. Inventaris</label>
+                <input type="text" class="form-control form-control-sm" id="cfg_INVENTORY_PATTERN"
+                       placeholder="{SEQ3}/{SOURCE}/{YYYY}">
+                <small class="text-muted">
+                  Contoh: <code>{SEQ3}/{SOURCE}/{YYYY}</code> → <code>001/BOS/2026</code>
+                </small>
+              </div>
+
+              <hr>
+              <div class="small fw-semibold mb-2">Kode Sumber Perolehan</div>
+              <div class="row g-2">
+                <div class="col-6">
+                  <label class="form-label small">Dana BOS</label>
+                  <input type="text" class="form-control form-control-sm" id="cfg_ACQ_SOURCE_BOS"
+                         placeholder="BOS">
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">Donasi</label>
+                  <input type="text" class="form-control form-control-sm" id="cfg_ACQ_SOURCE_DONATION"
+                         placeholder="DON">
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">Pembelian</label>
+                  <input type="text" class="form-control form-control-sm" id="cfg_ACQ_SOURCE_PURCHASE"
+                         placeholder="BLI">
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">Transfer</label>
+                  <input type="text" class="form-control form-control-sm" id="cfg_ACQ_SOURCE_TRANSFER"
+                         placeholder="TRF">
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">Lainnya</label>
+                  <input type="text" class="form-control form-control-sm" id="cfg_ACQ_SOURCE_OTHER"
+                         placeholder="LAI">
+                </div>
+              </div>
+
+              <hr>
+              <div class="d-flex gap-2">
+                <button type="button" class="btn btn-sm btn-outline-primary" onclick="SettingsPage.previewPattern()">
+                  <i class="bi bi-eye me-1"></i>Lihat Preview
+                </button>
+              </div>
+              <div id="patternPreview" class="mt-2"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==== KEBIJAKAN PINJAM ==== -->
+        <div class="col-lg-6">
+          <div class="page-card h-100">
+            <div class="page-card-header">
+              <h5 class="page-card-title">
+                <i class="bi bi-journal-arrow-up me-2"></i>Kebijakan Peminjaman
+              </h5>
+              <button class="btn btn-sm btn-primary" onclick="SettingsPage.saveGroup('loan')">
+                <i class="bi bi-check-lg me-1"></i>Simpan
+              </button>
+            </div>
+            <div class="page-card-body">
+              <div class="row g-2 mb-2">
+                <div class="col-6">
+                  <label class="form-label small">Maks Buku per Anggota</label>
+                  <input type="number" class="form-control form-control-sm"
+                         id="cfg_MAX_ACTIVE_LOANS" min="1" max="20">
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">Lama Pinjam (hari)</label>
+                  <input type="number" class="form-control form-control-sm"
+                         id="cfg_DEFAULT_LOAN_DAYS" min="1" max="90">
+                </div>
+              </div>
+              <div class="mb-2">
+                <label class="form-label small">Maks Perpanjangan</label>
+                <input type="number" class="form-control form-control-sm"
+                       id="cfg_MAX_RENEWALS" min="0" max="10">
+              </div>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="cfg_LOAN_ALLOW_STUDENT">
+                <label class="form-check-label small" for="cfg_LOAN_ALLOW_STUDENT">
+                  Izinkan Siswa meminjam
+                </label>
+              </div>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="cfg_LOAN_ALLOW_STAFF">
+                <label class="form-check-label small" for="cfg_LOAN_ALLOW_STAFF">
+                  Izinkan Guru/Staf meminjam
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+                <!-- ==== MANAJEMEN RAK ==== -->
+        <div class="col-lg-6">
+          <div class="page-card h-100">
+            <div class="page-card-header">
+              <h5 class="page-card-title">
+                <i class="bi bi-grid-3x3-gap me-2"></i>Manajemen Rak
+              </h5>
+              <button class="btn btn-sm btn-primary" onclick="SettingsPage.openShelfForm(null)">
+                <i class="bi bi-plus-lg me-1"></i>Tambah Rak
+              </button>
+            </div>
+            <div class="page-card-body p-0">
+              <div class="table-responsive" style="max-height:320px;overflow-y:auto">
+                <table class="table table-sm table-hover mb-0">
+                  <thead class="table-light" style="position:sticky;top:0;z-index:2">
+                    <tr>
+                      <th>Kode</th>
+                      <th>Nama</th>
+                      <th>Ruangan</th>
+                      <th class="text-center">Status</th>
+                      <th class="text-end" width="100">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="shelvesTableBody">
+                    <tr><td colspan="5" class="empty-row">Memuat...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==== DENDA ==== -->
+        <div class="col-lg-6">
+          <div class="page-card h-100">
+            <div class="page-card-header">
+              <h5 class="page-card-title">
+                <i class="bi bi-cash-coin me-2"></i>Kebijakan Denda
+              </h5>
+              <button class="btn btn-sm btn-primary" onclick="SettingsPage.saveGroup('fine')">
+                <i class="bi bi-check-lg me-1"></i>Simpan
+              </button>
+            </div>
+            <div class="page-card-body">
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" id="cfg_FINE_ENABLED">
+                <label class="form-check-label small" for="cfg_FINE_ENABLED">
+                  Aktifkan denda keterlambatan
+                </label>
+              </div>
+              <div class="mb-2">
+                <label class="form-label small">Denda per Hari (Rp)</label>
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text">Rp</span>
+                  <input type="number" class="form-control" id="cfg_FINE_PER_DAY"
+                         min="0" step="100">
+                </div>
+              </div>
+              <div class="alert alert-info small py-2 mb-0">
+                <i class="bi bi-info-circle me-1"></i>
+                Denda otomatis dihitung saat pengembalian dengan rumus:
+                <code>hari terlambat × denda per hari</code>.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==== FITUR ==== -->
+        <div class="col-lg-6">
+          <div class="page-card h-100">
+            <div class="page-card-header">
+              <h5 class="page-card-title">
+                <i class="bi bi-toggles me-2"></i>Fitur Tambahan
+              </h5>
+              <button class="btn btn-sm btn-primary" onclick="SettingsPage.saveGroup('feature')">
+                <i class="bi bi-check-lg me-1"></i>Simpan
+              </button>
+            </div>
+            <div class="page-card-body">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="cfg_RESERVATION_ENABLED">
+                <label class="form-check-label small" for="cfg_RESERVATION_ENABLED">
+                  Aktifkan fitur reservasi buku
+                </label>
+              </div>
+              <div class="text-muted small mt-2">
+                Fitur lain (WA/email notifikasi, ekspor otomatis) akan ditambahkan pada versi berikutnya.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 2: PENGGUNA
+         ============================================================ -->
+    <div class="tab-pane fade" id="paneUsers" role="tabpanel">
+      <div class="page-card mb-3">
+        <div class="page-card-body">
+          <div class="row g-2 align-items-center">
+            <div class="col-md-5">
+              <div class="input-group input-group-sm">
+                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" id="usersSearchInput"
+                       placeholder="Cari email atau nama...">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <select class="form-select form-select-sm" id="usersRoleFilter">
+                <option value="">Semua Role</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select class="form-select form-select-sm" id="usersStatusFilter">
+                <option value="">Semua Status</option>
+                <option value="ACTIVE">Aktif</option>
+                <option value="INACTIVE">Nonaktif</option>
+                <option value="LOCKED">Terkunci</option>
+              </select>
+            </div>
+            <div class="col-md-2 text-end">
+              <div class="d-flex gap-1">
+                <button class="btn btn-sm btn-outline-info" id="btnImportUsers"
+                        title="Import CSV">
+                  <i class="bi bi-upload"></i>
+                </button>
+                <button class="btn btn-sm btn-primary flex-fill" id="btnAddUser">
+                  <i class="bi bi-plus-lg me-1"></i>Tambah
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-card">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Email</th>
+                <th>Nama</th>
+                <th>Role</th>
+                <th>Auth</th>
+                <th>Login Terakhir</th>
+                <th>Status</th>
+                <th width="180" class="text-end">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody">
+              <tr><td colspan="7" class="empty-row">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 3: ROLE & PERMISSION
+         ============================================================ -->
+    <div class="tab-pane fade" id="paneRoles" role="tabpanel">
+      <div class="page-card mb-3">
+        <div class="page-card-body">
+          <div class="row g-2 align-items-center">
+            <div class="col-md-6">
+              <label class="form-label small mb-1">Pilih Role</label>
+              <select class="form-select form-select-sm" id="roleSelector">
+                <option value="">-- Pilih Role --</option>
+              </select>
+            </div>
+            <div class="col-md-6 d-flex align-items-end">
+              <div class="alert alert-info py-2 small mb-0 w-100">
+                <i class="bi bi-info-circle me-1"></i>
+                Centang izin per modul, lalu klik <strong>Simpan</strong> di baris modul tersebut.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-card">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0" id="permissionTable">
+            <thead class="table-light">
+              <tr>
+                <th>Modul</th>
+                <th class="text-center" width="90">Lihat</th>
+                <th class="text-center" width="90">Tambah</th>
+                <th class="text-center" width="90">Ubah</th>
+                <th class="text-center" width="90">Hapus</th>
+                <th class="text-center" width="90">Ekspor</th>
+                <th width="100" class="text-end">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="permissionTableBody">
+              <tr><td colspan="7" class="empty-row">Pilih role terlebih dahulu</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+        <!-- ============================================================
+         TAB: TINGKAT KELAS
+         ============================================================ -->
+    <div class="tab-pane fade" id="paneGrades" role="tabpanel">
+
+      <div class="page-card mb-3">
+        <div class="page-card-body">
+          <div class="row g-2 align-items-center">
+            <div class="col-md-3">
+              <select class="form-select form-select-sm" id="gradesGroupFilter">
+                <option value="">Semua Jenjang</option>
+                <option value="SD">SD</option>
+                <option value="MI">MI</option>
+                <option value="SMP">SMP</option>
+                <option value="MTS">MTs</option>
+                <option value="SMA">SMA</option>
+                <option value="MA">MA</option>
+                <option value="SMK">SMK</option>
+                <option value="OTHER">Lainnya</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <select class="form-select form-select-sm" id="gradesStatusFilter">
+                <option value="ACTIVE">Aktif</option>
+                <option value="INACTIVE">Nonaktif</option>
+                <option value="">Semua Status</option>
+              </select>
+            </div>
+            <div class="col-md-6 text-end">
+              <button class="btn btn-sm btn-primary" id="btnAddGrade">
+                <i class="bi bi-plus-lg me-1"></i>Tambah Tingkat
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-card">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Kode</th>
+                <th class="text-center">No.</th>
+                <th>Nama Tingkat</th>
+                <th>Grup Jenjang</th>
+                <th class="text-center">Urutan</th>
+                <th class="text-center">Status</th>
+                <th width="150" class="text-end">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="gradesTableBody">
+              <tr><td colspan="7" class="empty-row">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 4: INFO SISTEM
+         ============================================================ -->
+    <div class="tab-pane fade" id="paneInfo" role="tabpanel">
+      <div class="row g-3">
+
+        <div class="col-lg-6">
+          <div class="page-card">
+            <div class="page-card-header">
+              <h5 class="page-card-title">
+                <i class="bi bi-app-indicator me-2"></i>Aplikasi
+              </h5>
+            </div>
+            <div class="page-card-body" id="infoAppBody">
+              <div class="text-center py-3"><div class="spinner-border text-primary spinner-border-sm"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="page-card">
+            <div class="page-card-header">
+              <h5 class="page-card-title">
+                <i class="bi bi-hdd-stack me-2"></i>Penyimpanan
+              </h5>
+            </div>
+            <div class="page-card-body" id="infoStorageBody">
+              <div class="text-center py-3"><div class="spinner-border text-primary spinner-border-sm"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="page-card">
+            <div class="page-card-header">
+              <h5 class="page-card-title">
+                <i class="bi bi-bar-chart me-2"></i>Ringkasan Data
+              </h5>
+            </div>
+            <div class="page-card-body" id="infoSummaryBody">
+              <div class="text-center py-3"><div class="spinner-border text-primary spinner-border-sm"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: FORM USER
+     ============================================================ -->
+<div class="modal fade" id="userFormModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="userFormTitle">Tambah User</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="userForm" onsubmit="return false;">
+          <div class="row g-2">
+            <div class="col-md-6">
+              <label class="form-label small">Email <span class="text-danger">*</span></label>
+              <input type="email" class="form-control form-control-sm" id="userEmail" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small">Nama Lengkap <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-sm" id="userFullName" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small">Role <span class="text-danger">*</span></label>
+              <select class="form-select form-select-sm" id="userRole" required>
+                <option value="">-- Pilih Role --</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small">Auth Provider</label>
+              <select class="form-select form-select-sm" id="userAuthProvider">
+                <option value="BOTH">Manual + Google</option>
+                <option value="MANUAL">Manual saja</option>
+                <option value="GOOGLE">Google saja</option>
+              </select>
+            </div>
+
+            <div class="col-12">
+              <hr class="my-2">
+              <div class="small text-muted mb-2">
+                <i class="bi bi-link-45deg me-1"></i>Opsional: hubungkan dengan identitas anggota
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small">Tipe Terkait</label>
+              <select class="form-select form-select-sm" id="userLinkedType">
+                <option value="">-- Tidak ada --</option>
+                <option value="STUDENT">Siswa</option>
+                <option value="STAFF">Guru/Staf</option>
+              </select>
+            </div>
+            <div class="col-md-6 d-none" id="userLinkedPickerWrap">
+              <label class="form-label small">Pilih Anggota</label>
+              <select class="form-select form-select-sm" id="userLinkedId">
+                <option value="">-- Pilih --</option>
+              </select>
+            </div>
+
+            <div class="col-12 d-none" id="userPasswordBlock">
+              <hr class="my-2">
+              <div class="alert alert-warning small py-2">
+                <i class="bi bi-shield-lock me-1"></i>
+                Password awal: <strong>otomatis digenerate</strong> atau isi sendiri.
+                Password default akan ditampilkan setelah simpan.
+              </div>
+              <label class="form-label small">Password Awal (opsional)</label>
+              <input type="text" class="form-control form-control-sm" id="userInitialPassword"
+                     placeholder="Kosongkan untuk auto-generate">
+            </div>
+
+            <div class="col-12">
+              <label class="form-label small">Status</label>
+              <select class="form-select form-select-sm" id="userStatus">
+                <option value="ACTIVE">Aktif</option>
+                <option value="INACTIVE">Nonaktif</option>
+                <option value="LOCKED">Terkunci</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-primary" id="btnSaveUser">
+          <i class="bi bi-check-lg me-1"></i>Simpan
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: IMPORT USERS
+     ============================================================ -->
+<div class="modal fade" id="importUserModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Import Pengguna</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+
+        <!-- STEP 1 -->
+        <div id="importUserStep1">
+          <div class="alert alert-info small py-2">
+            <i class="bi bi-info-circle me-1"></i>
+            <strong>Format CSV:</strong>
+            <div class="mt-1" style="font-family:monospace;font-size:11px">
+              email,full_name,role_code,linked_type,linked_identifier,auth_provider,status
+            </div>
+            <ul class="mb-0 mt-1" style="font-size:11px">
+              <li><strong>role_code</strong>: SUPER_ADMIN, LIBRARIAN, TEACHER, STUDENT, PRINCIPAL</li>
+              <li><strong>linked_type</strong>: SISWA atau STAFF (opsional)</li>
+              <li><strong>linked_identifier</strong>: NIS (untuk SISWA) atau NIP (untuk STAFF)</li>
+              <li><strong>auth_provider</strong>: MANUAL, GOOGLE, BOTH (default: MANUAL)</li>
+            </ul>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">Mode Import</label>
+              <div class="btn-group w-100" role="group">
+                <input type="radio" class="btn-check" name="importUserMode"
+                       id="importUserModeInsert" value="INSERT" checked>
+                <label class="btn btn-outline-primary btn-sm" for="importUserModeInsert">
+                  Tambah Baru
+                </label>
+                <input type="radio" class="btn-check" name="importUserMode"
+                       id="importUserModeUpsert" value="UPSERT">
+                <label class="btn btn-outline-primary btn-sm" for="importUserModeUpsert">
+                  Update/Tambah
+                </label>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">Sumber</label>
+              <div class="btn-group w-100" role="group">
+                <input type="radio" class="btn-check" name="importUserSource"
+                       id="importUserSourcePaste" value="PASTE" checked>
+                <label class="btn btn-outline-secondary btn-sm" for="importUserSourcePaste">
+                  Paste
+                </label>
+                <input type="radio" class="btn-check" name="importUserSource"
+                       id="importUserSourceFile" value="FILE">
+                <label class="btn btn-outline-secondary btn-sm" for="importUserSourceFile">
+                  Upload
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div id="importUserPasteArea">
+            <textarea class="form-control form-control-sm" id="importUserPasteText"
+                      rows="8" placeholder="Paste data CSV di sini"
+                      style="font-family:monospace;font-size:12px"></textarea>
+          </div>
+
+          <div id="importUserUploadArea" style="display:none">
+            <div class="border rounded p-4 text-center bg-light">
+              <i class="bi bi-cloud-arrow-up" style="font-size:32px;color:#9ca3af"></i>
+              <div class="mt-2">
+                <label class="btn btn-sm btn-primary mb-0">
+                  Pilih File CSV
+                  <input type="file" id="importUserFileInput" accept=".csv,.txt"
+                         style="display:none" onchange="SettingsPage.onImportUserFile(event)">
+                </label>
+              </div>
+              <div class="text-muted small mt-2" id="importUserFileName"></div>
+            </div>
+          </div>
+
+          <div class="mt-3 text-end">
+            <button class="btn btn-primary" onclick="SettingsPage.parseImportUserData()">
+              <i class="bi bi-arrow-right me-1"></i>Parse & Preview
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div id="importUserStep2" style="display:none">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="mb-0">Preview (<span id="importUserPreviewCount">0</span> baris)</h6>
+            <button class="btn btn-sm btn-outline-secondary" onclick="SettingsPage.backToImportUserStep1()">
+              <i class="bi bi-arrow-left me-1"></i>Kembali
+            </button>
+          </div>
+          <div class="table-responsive" style="max-height:400px;border:1px solid #e5e7eb;border-radius:8px">
+            <table class="table table-sm table-hover mb-0" id="importUserPreviewTable">
+              <thead class="table-light" style="position:sticky;top:0;z-index:2"></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="mt-3 d-flex justify-content-end gap-2">
+            <button class="btn btn-secondary" onclick="SettingsPage.backToImportUserStep1()">Batal</button>
+            <button class="btn btn-success" id="btnExecuteImportUser"
+                    onclick="SettingsPage.executeImportUser()">
+              <i class="bi bi-check-lg me-1"></i>Import Sekarang (<span id="importUserReadyCount">0</span>)
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div id="importUserStep3" style="display:none">
+          <div class="text-center py-3">
+            <div id="importUserResultIcon" style="font-size:56px"></div>
+            <h4 class="mt-2 mb-1" id="importUserResultTitle">Import Selesai</h4>
+            <p class="text-muted" id="importUserResultSubtitle"></p>
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-md-3">
+              <div class="border rounded p-2 text-center">
+                <div class="fw-bold fs-5" id="importUserStatTotal">0</div>
+                <div class="small text-muted">Total</div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="border rounded p-2 text-center text-success">
+                <div class="fw-bold fs-5" id="importUserStatSuccess">0</div>
+                <div class="small text-muted">Berhasil</div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="border rounded p-2 text-center text-danger">
+                <div class="fw-bold fs-5" id="importUserStatFailed">0</div>
+                <div class="small text-muted">Gagal</div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="border rounded p-2 text-center text-info">
+                <div class="fw-bold fs-5" id="importUserStatUpdated">0</div>
+                <div class="small text-muted">Update</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="importUserGeneratedPasswords" style="display:none">
+            <div class="alert alert-info">
+              <h6 class="mb-2"><i class="bi bi-key me-1"></i>Password Awal User Baru</h6>
+              <div class="table-responsive" style="max-height:200px;overflow-y:auto">
+                <table class="table table-sm table-bordered mb-0">
+                  <thead class="table-light"><tr><th>Email</th><th>Password</th></tr></thead>
+                  <tbody id="importUserPwdTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div id="importUserFailedList" style="display:none">
+            <h6 class="mt-3">Detail Error</h6>
+            <div class="table-responsive" style="max-height:250px;overflow-y:auto;border:1px solid #e5e7eb;border-radius:8px">
+              <table class="table table-sm mb-0">
+                <thead class="table-light" style="position:sticky;top:0">
+                  <tr><th width="60">Baris</th><th>Pesan</th></tr>
+                </thead>
+                <tbody id="importUserFailedTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="mt-3 text-end">
+            <button class="btn btn-primary" onclick="SettingsPage.finishImportUser()">
+              <i class="bi bi-check-circle me-1"></i>Selesai
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,520 @@
+<div id="booksPage">
+
+  <!-- ===== HEADER TOOLBAR ===== -->
+  <div class="page-card mb-3">
+    <div class="page-card-body">
+      <div class="row g-2 align-items-center">
+        <div class="col-md-5">
+          <div class="input-group">
+            <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" id="booksSearchInput"
+                   placeholder="Cari judul, ISBN, atau penulis...">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <select class="form-select" id="booksCategoryFilter">
+            <option value="">Semua Kategori</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <select class="form-select" id="booksStatusFilter">
+            <option value="">Semua Status</option>
+            <option value="ACTIVE">Aktif</option>
+            <option value="INACTIVE">Nonaktif</option>
+            <option value="ARCHIVED">Diarsipkan</option>
+          </select>
+        </div>
+        <div class="col-md-2 text-end">
+          <button class="btn btn-primary w-100" id="btnAddBook">
+            <i class="bi bi-plus-lg me-1"></i>Tambah Buku
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TABEL BUKU ===== -->
+  <div class="page-card">
+    <div class="page-card-header">
+      <h5 class="page-card-title">
+        <i class="bi bi-book me-2"></i>Daftar Buku
+        <span class="badge bg-secondary ms-2" id="booksTotalBadge">0</span>
+      </h5>
+      <small class="text-muted" id="booksPageInfo"></small>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th width="70">Cover</th>
+            <th>Judul</th>
+            <th>Kategori</th>
+            <th>Penulis</th>
+            <th class="text-center">Total</th>
+            <th class="text-center">Tersedia</th>
+            <th class="text-center">Status</th>
+            <th width="150" class="text-end">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="booksTableBody">
+          <tr><td colspan="8" class="empty-row">Memuat data...</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="page-card-header border-top" id="booksPaginationWrap">
+      <div class="d-flex justify-content-between align-items-center w-100">
+        <small class="text-muted" id="booksPaginationInfo"></small>
+        <nav>
+          <ul class="pagination pagination-sm mb-0" id="booksPagination"></ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: TAMBAH / EDIT BUKU
+     ============================================================ -->
+<div class="modal fade" id="bookFormModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="bookFormTitle">Tambah Buku</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="bookForm" onsubmit="return false;">
+
+          <div class="row g-3">
+            <!-- ==== COVER ==== -->
+            <div class="col-md-4">
+              <label class="form-label small">Cover Buku</label>
+              <div class="cover-preview-wrap" id="coverPreviewWrap">
+                <img id="coverPreviewImg" src="" alt="" class="d-none">
+                <div class="cover-placeholder" id="coverPlaceholder">
+                  <i class="bi bi-image"></i>
+                  <div class="small text-muted mt-1">Belum ada cover</div>
+                </div>
+              </div>
+              <div class="mt-2 d-flex gap-2">
+                <label class="btn btn-sm btn-outline-primary flex-fill mb-0">
+                  <i class="bi bi-upload me-1"></i>Upload
+                  <input type="file" id="coverFileInput" accept="image/*"
+                         style="display:none" onchange="BooksPage.onCoverFile(event)">
+                </label>
+                <button type="button" class="btn btn-sm btn-outline-secondary"
+                        onclick="BooksPage.onCoverUrl()">
+                  <i class="bi bi-link-45deg"></i>
+                </button>
+              </div>
+              <input type="hidden" id="bookCoverUrl">
+              <div class="small text-muted mt-1" id="coverStatusText"></div>
+            </div>
+
+            <!-- ==== KOLOM KANAN ==== -->
+            <div class="col-md-8">
+              <div class="mb-2">
+                <label class="form-label small">Judul <span class="text-danger">*</span></label>
+                <input type="text" class="form-control form-control-sm" id="bookTitle" required>
+              </div>
+
+              <div class="row g-2 mb-2">
+                <div class="col-6">
+                  <label class="form-label small">ISBN</label>
+                  <input type="text" class="form-control form-control-sm" id="bookIsbn">
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">Edisi</label>
+                  <input type="text" class="form-control form-control-sm" id="bookEdition">
+                </div>
+              </div>
+
+              <div class="row g-2 mb-2">
+                <div class="col-6">
+                  <label class="form-label small">Kategori <span class="text-danger">*</span></label>
+                  <select class="form-select form-select-sm" id="bookCategory" required>
+                    <option value="">-- Pilih Kategori --</option>
+                  </select>
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">Tipe Buku <span class="text-danger">*</span></label>
+                  <select class="form-select form-select-sm" id="bookType" required>
+                    <option value="">-- Pilih Tipe --</option>
+                    <option value="TEXTBOOK">Buku Pelajaran</option>
+                    <option value="REFERENCE">Referensi</option>
+                    <option value="FICTION">Fiksi</option>
+                    <option value="NONFICTION">Nonfiksi</option>
+                    <option value="MAGAZINE">Majalah</option>
+                    <option value="OTHER">Lainnya</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="row g-2 mb-2">
+                <div class="col-4">
+                  <label class="form-label small">Tahun Terbit <span class="text-danger">*</span></label>
+                  <input type="number" class="form-control form-control-sm"
+                         id="bookPublicationYear" min="1900" max="2100" required>
+                </div>
+                <div class="col-4">
+                  <label class="form-label small">Bahasa</label>
+                  <input type="text" class="form-control form-control-sm"
+                         id="bookLanguage" value="Indonesia">
+                </div>
+                <div class="col-4">
+                  <label class="form-label small">Jumlah Halaman</label>
+                  <input type="number" class="form-control form-control-sm"
+                         id="bookPageCount" min="1">
+                </div>
+              </div>
+
+              <div class="row g-2 mb-2">
+                <div class="col-6">
+                  <label class="form-label small">Penerbit</label>
+                  <div class="input-group input-group-sm">
+                    <select class="form-select form-select-sm" id="bookPublisher">
+                      <option value="">-- Pilih Penerbit --</option>
+                    </select>
+                    <button class="btn btn-outline-secondary" type="button"
+                            onclick="BooksPage.promptAddPublisher()">
+                      <i class="bi bi-plus"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">Rak Default</label>
+                  <div class="input-group input-group-sm">
+                    <select class="form-select form-select-sm" id="bookShelf">
+                      <option value="">-- Pilih Rak --</option>
+                    </select>
+                    <button class="btn btn-outline-primary" type="button"
+                            onclick="SettingsPage.openShelfForm(null)"
+                            title="Tambah rak baru">
+                      <i class="bi bi-plus-lg"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row g-2 mb-2">
+                <div class="col-6">
+                  <label class="form-label small">Kelas Min</label>
+                  <input type="number" class="form-control form-control-sm"
+                         id="bookMinGrade" min="1" max="12">
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">Kelas Max</label>
+                  <input type="number" class="form-control form-control-sm"
+                         id="bookMaxGrade" min="1" max="12">
+                </div>
+              </div>
+
+              <div class="mb-2">
+                <label class="form-label small">Subjudul</label>
+                <input type="text" class="form-control form-control-sm" id="bookSubtitle">
+              </div>
+            </div>
+
+            <!-- ==== PENULIS ==== -->
+            <div class="col-12">
+              <label class="form-label small">Penulis</label>
+              <div id="authorsList" class="authors-list"></div>
+              <button type="button" class="btn btn-sm btn-outline-primary mt-2"
+                      onclick="BooksPage.addAuthorRow()">
+                <i class="bi bi-plus-lg me-1"></i>Tambah Penulis
+              </button>
+            </div>
+
+            <!-- ==== DESKRIPSI ==== -->
+            <div class="col-12">
+              <label class="form-label small">Deskripsi / Sinopsis</label>
+              <textarea class="form-control form-control-sm" id="bookDescription"
+                        rows="3"></textarea>
+            </div>
+
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-primary" id="btnSaveBook">
+          <i class="bi bi-check-lg me-1"></i>Simpan
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: DETAIL BUKU + EKSEMPLAR
+     ============================================================ -->
+<div class="modal fade" id="bookDetailModal" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="bookDetailTitle">Detail Buku</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="bookDetailBody">
+        <div class="text-center py-4">
+          <div class="spinner-border text-primary" role="status"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+        <button type="button" class="btn btn-success" id="btnAddCopy">
+          <i class="bi bi-plus-lg me-1"></i>Tambah Eksemplar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: TAMBAH / EDIT EKSEMPLAR
+     ============================================================ -->
+<div class="modal fade" id="copyFormModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="copyFormTitle">Tambah Eksemplar</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+
+        <!-- ===== TAB SINGLE / BULK (hanya muncul saat Tambah, bukan Edit) ===== -->
+        <ul class="nav nav-tabs mb-3" id="copyModeTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="copyTabSingle" data-bs-toggle="tab"
+                    data-bs-target="#copyPaneSingle" type="button" role="tab">
+              <i class="bi bi-1-circle me-1"></i>Tambah 1 Eksemplar
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="copyTabBulk" data-bs-toggle="tab"
+                    data-bs-target="#copyPaneBulk" type="button" role="tab">
+              <i class="bi bi-list-ol me-1"></i>Tambah Banyak (Bulk)
+            </button>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <!-- ============================================================
+               TAB 1: SINGLE
+               ============================================================ -->
+          <div class="tab-pane fade show active" id="copyPaneSingle" role="tabpanel">
+            <form id="copyForm" onsubmit="return false;">
+
+              <!-- Radio Mode Barcode -->
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Mode Barcode & No. Inventaris</label>
+                <div class="btn-group w-100" role="group">
+                  <input type="radio" class="btn-check" name="barcodeMode" id="barcodeModeAuto" value="AUTO">
+                  <label class="btn btn-outline-primary btn-sm" for="barcodeModeAuto">
+                    <i class="bi bi-magic me-1"></i>Auto Generate
+                  </label>
+                  <input type="radio" class="btn-check" name="barcodeMode" id="barcodeModeManual" value="MANUAL" checked>
+                  <label class="btn btn-outline-primary btn-sm" for="barcodeModeManual">
+                    <i class="bi bi-pencil me-1"></i>Input Manual
+                  </label>
+                </div>
+              </div>
+
+              <!-- AUTO BLOCK -->
+              <div id="copyAutoBlock" class="d-none">
+                <div class="alert alert-info small py-2 mb-3">
+                  <i class="bi bi-info-circle me-1"></i>
+                  Barcode & No. Inventaris akan digenerate otomatis berdasarkan pola di Pengaturan.
+                  <div class="mt-1">
+                    <a href="javascript:void(0)" onclick="BooksPage.previewSingleAuto()">
+                      <i class="bi bi-eye me-1"></i>Lihat preview
+                    </a>
+                  </div>
+                </div>
+                <div id="copyAutoPreview" class="mb-3"></div>
+              </div>
+
+              <!-- MANUAL BLOCK -->
+              <div id="copyManualBlock">
+                <div class="mb-2">
+                  <label class="form-label small">Barcode <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control form-control-sm" id="copyBarcode">
+                  <small class="text-muted">Barcode unik untuk peminjaman</small>
+                </div>
+                <div class="mb-2">
+                  <label class="form-label small">Nomor Inventaris</label>
+                  <input type="text" class="form-control form-control-sm" id="copyAccession">
+                </div>
+              </div>
+
+              <!-- FIELD BERSAMA -->
+              <div class="row g-2 mb-2">
+                <div class="col-6">
+                  <label class="form-label small">Tanggal Perolehan</label>
+                  <input type="date" class="form-control form-control-sm" id="copyAcqDate">
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">Sumber Perolehan</label>
+                  <select class="form-select form-select-sm" id="copyAcqType">
+                    <option value="PURCHASE">Pembelian</option>
+                    <option value="BOS">Dana BOS</option>
+                    <option value="DONATION">Donasi</option>
+                    <option value="TRANSFER">Transfer</option>
+                    <option value="OTHER">Lainnya</option>
+                  </select>
+                </div>
+              </div>
+              <div class="mb-2">
+                <label class="form-label small">Keterangan Sumber</label>
+                <input type="text" class="form-control form-control-sm" id="copyNotes"
+                       placeholder="Contoh: Dana BOS 2026 Tahap 1, Donasi Yayasan ABC">
+              </div>
+              <div class="row g-2 mb-2">
+                <div class="col-6">
+                  <label class="form-label small">Harga Perolehan</label>
+                  <input type="number" class="form-control form-control-sm" id="copyCost" min="0" step="1000">
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">Kondisi</label>
+                  <select class="form-select form-select-sm" id="copyCondition">
+                    <option value="NEW">Baru</option>
+                    <option value="GOOD">Baik</option>
+                    <option value="MINOR_DAMAGE">Rusak Ringan</option>
+                    <option value="DAMAGED">Rusak Berat</option>
+                  </select>
+                </div>
+              </div>
+              <div class="mb-2">
+                <label class="form-label small">Rak</label>
+                <div class="input-group input-group-sm">
+                  <select class="form-select form-select-sm" id="copyShelf">
+                    <option value="">-- Ikuti Rak Buku --</option>
+                  </select>
+                  <button class="btn btn-outline-primary" type="button"
+                          onclick="SettingsPage.openShelfForm(null)"
+                          title="Tambah rak baru">
+                    <i class="bi bi-plus-lg"></i>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- ============================================================
+               TAB 2: BULK
+               ============================================================ -->
+          <div class="tab-pane fade" id="copyPaneBulk" role="tabpanel">
+            <form id="copyBulkForm" onsubmit="return false;">
+
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Jumlah Eksemplar <span class="text-danger">*</span></label>
+                <input type="number" class="form-control form-control-sm" id="bulkQuantity"
+                       min="1" max="500" value="10" required>
+                <small class="text-muted">Maksimal 500 eksemplar per batch.</small>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label small fw-semibold">Mode Barcode & No. Inventaris</label>
+                <div class="btn-group w-100" role="group">
+                  <input type="radio" class="btn-check" name="bulkBarcodeMode" id="bulkModeAuto" value="AUTO" checked>
+                  <label class="btn btn-outline-primary btn-sm" for="bulkModeAuto">
+                    <i class="bi bi-magic me-1"></i>Auto Generate
+                  </label>
+                  <input type="radio" class="btn-check" name="bulkBarcodeMode" id="bulkModeManual" value="MANUAL">
+                  <label class="btn btn-outline-primary btn-sm" for="bulkModeManual">
+                    <i class="bi bi-pencil me-1"></i>Input Manual
+                  </label>
+                </div>
+              </div>
+
+              <!-- AUTO PREVIEW -->
+              <div id="bulkAutoBlock">
+                <div class="alert alert-info small py-2 mb-3">
+                  <i class="bi bi-info-circle me-1"></i>
+                  Barcode akan digenerate otomatis. Lihat preview di bawah:
+                </div>
+                <div id="bulkAutoPreview" class="mb-3"></div>
+              </div>
+
+              <!-- MANUAL TEXTAREA -->
+              <div id="bulkManualBlock" class="d-none">
+                <div class="mb-3">
+                  <label class="form-label small fw-semibold">Daftar Barcode (1 baris = 1 eksemplar)</label>
+                  <textarea class="form-control form-control-sm" id="bulkManualBarcodes"
+                            rows="6" placeholder="LIB000001&#10;LIB000002&#10;LIB000003"
+                            style="font-family:monospace;font-size:12px"></textarea>
+                  <small class="text-muted">Masukkan <strong>persis</strong> sebanyak jumlah di atas.</small>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small fw-semibold">Daftar No. Inventaris (opsional)</label>
+                  <textarea class="form-control form-control-sm" id="bulkManualInventory"
+                            rows="4" placeholder="001/BLI/2026&#10;002/BLI/2026"
+                            style="font-family:monospace;font-size:12px"></textarea>
+                  <small class="text-muted">Kosongkan jika tidak diperlukan.</small>
+                </div>
+              </div>
+
+              <!-- FIELD BERSAMA -->
+              <div class="row g-2 mb-2">
+                <div class="col-6">
+                  <label class="form-label small">Tanggal Perolehan</label>
+                  <input type="date" class="form-control form-control-sm" id="bulkAcqDate">
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">Sumber Perolehan</label>
+                  <select class="form-select form-select-sm" id="bulkAcqType">
+                    <option value="PURCHASE">Pembelian</option>
+                    <option value="BOS">Dana BOS</option>
+                    <option value="DONATION">Donasi</option>
+                    <option value="TRANSFER">Transfer</option>
+                    <option value="OTHER">Lainnya</option>
+                  </select>
+                </div>
+              </div>
+              <div class="mb-2">
+                <label class="form-label small">Keterangan Sumber</label>
+                <input type="text" class="form-control form-control-sm" id="bulkNotes"
+                       placeholder="Contoh: Dana BOS 2026 Tahap 1">
+              </div>
+              <div class="row g-2 mb-2">
+                <div class="col-6">
+                  <label class="form-label small">Harga Perolehan / Eksemplar</label>
+                  <input type="number" class="form-control form-control-sm" id="bulkCost" min="0" step="1000">
+                </div>
+                <div class="col-6">
+                  <label class="form-label small">Kondisi</label>
+                  <select class="form-select form-select-sm" id="bulkCondition">
+                    <option value="NEW">Baru</option>
+                    <option value="GOOD">Baik</option>
+                    <option value="MINOR_DAMAGE">Rusak Ringan</option>
+                    <option value="DAMAGED">Rusak Berat</option>
+                  </select>
+                </div>
+              </div>
+              <div class="mb-2">
+                <label class="form-label small">Rak</label>
+                <div class="input-group input-group-sm">
+                  <select class="form-select form-select-sm" id="bulkShelf">
+                    <option value="">-- Ikuti Rak Buku --</option>
+                  </select>
+                  <button class="btn btn-outline-primary" type="button"
+                          onclick="SettingsPage.openShelfForm(null)"
+                          title="Tambah rak baru">
+                    <i class="bi bi-plus-lg"></i>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-primary" id="btnSaveCopy">
+          <i class="bi bi-check-lg me-1"></i>Simpan
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

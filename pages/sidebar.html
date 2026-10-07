@@ -1,0 +1,80 @@
+<aside id="sidebar" class="app-sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-brand">
+        <img id="sidebarLogoImg" src="" alt="Logo" class="sidebar-brand-logo d-none">
+        <i class="bi bi-book-half" id="sidebarLogoIcon"></i>
+        <span class="sidebar-brand-text" id="sidebarLibraryName">Perpustakaan</span>
+      </div>
+    <button class="btn btn-sm btn-link text-white sidebar-toggle-btn d-lg-none"
+            id="sidebarCloseBtn">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="sidebar-section-label">Menu Utama</div>
+
+    <a class="sidebar-link" data-page="dashboard" href="#dashboard">
+      <i class="bi bi-speedometer2"></i>
+      <span class="sidebar-link-text">Dashboard</span>
+    </a>
+
+    <a class="sidebar-link" data-page="books" href="#books" data-perm="BOOKS:view">
+      <i class="bi bi-book"></i>
+      <span class="sidebar-link-text">Katalog Buku</span>
+    </a>
+
+    <a class="sidebar-link" data-page="members" href="#members" data-perm="MEMBERS:view">
+      <i class="bi bi-people"></i>
+      <span class="sidebar-link-text">Anggota</span>
+    </a>
+
+    <a class="sidebar-link" data-page="loans" href="#loans" data-perm="LOANS:view">
+      <i class="bi bi-journal-arrow-up"></i>
+      <span class="sidebar-link-text">Peminjaman</span>
+    </a>
+
+    <a class="sidebar-link" data-page="returns" href="#returns" data-perm="RETURNS:view">
+      <i class="bi bi-journal-arrow-down"></i>
+      <span class="sidebar-link-text">Pengembalian</span>
+    </a>
+
+    <a class="sidebar-link" data-page="fines" href="#fines" data-perm="FINES:view">
+      <i class="bi bi-cash-coin"></i>
+      <span class="sidebar-link-text">Denda</span>
+    </a>
+
+    <a class="sidebar-link" data-page="reservations" href="#reservations" data-perm="RESERVATIONS:view">
+      <i class="bi bi-hourglass-split"></i>
+      <span class="sidebar-link-text">
+        Reservasi
+        <span class="badge bg-warning text-dark ms-1"
+              id="sidebarReservationBadge" style="display:none;font-size:10px"></span>
+      </span>
+    </a>
+
+    <div class="sidebar-section-label">Analitik & Sistem</div>
+
+    <a class="sidebar-link" data-page="reports" href="#reports" data-perm="REPORTS:view">
+      <i class="bi bi-bar-chart"></i>
+      <span class="sidebar-link-text">Laporan</span>
+    </a>
+
+    <a class="sidebar-link" data-page="settings" href="#settings" data-perm="SETTINGS:view">
+      <i class="bi bi-gear"></i>
+      <span class="sidebar-link-text">Pengaturan</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar" id="sidebarAvatar">A</div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name" id="sidebarUserName">-</div>
+        <div class="sidebar-user-role" id="sidebarUserRole">-</div>
+      </div>
+    </div>
+  </div>
+</aside>
+<div id="sidebarBackdrop" class="sidebar-backdrop"></div>
+

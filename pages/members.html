@@ -1,0 +1,779 @@
+<div id="membersPage">
+
+  <!-- ===== TABS ===== -->
+  <ul class="nav nav-tabs mb-3" id="membersTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="tabStudents" data-bs-toggle="tab"
+              data-bs-target="#paneStudents" type="button" role="tab">
+        <i class="bi bi-people me-1"></i>Siswa
+        <span class="badge bg-secondary ms-1" id="tabStudentsCount">0</span>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="tabStaff" data-bs-toggle="tab"
+              data-bs-target="#paneStaff" type="button" role="tab">
+        <i class="bi bi-person-badge me-1"></i>Guru & Staf
+        <span class="badge bg-secondary ms-1" id="tabStaffCount">0</span>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="tabClasses" data-bs-toggle="tab"
+              data-bs-target="#paneClasses" type="button" role="tab">
+        <i class="bi bi-door-open me-1"></i>Kelas
+        <span class="badge bg-secondary ms-1" id="tabClassesCount">0</span>
+      </button>
+    </li>
+  </ul>
+
+  <div class="tab-content" id="membersTabContent">
+
+    <!-- ============================================================
+         TAB 1: SISWA
+         ============================================================ -->
+    <div class="tab-pane fade show active" id="paneStudents" role="tabpanel">
+
+      <div class="page-card mb-3">
+        <div class="page-card-body">
+          <div class="row g-2 align-items-center">
+            <div class="col-md-5">
+              <div class="input-group">
+                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" id="studentsSearchInput"
+                       placeholder="Cari nama, NIS, atau NISN...">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <select class="form-select" id="studentsClassFilter">
+                <option value="">Semua Kelas</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select class="form-select" id="studentsStatusFilter">
+                <option value="">Semua Status</option>
+                <option value="ACTIVE">Aktif</option>
+                <option value="SUSPENDED">Ditangguhkan</option>
+                <option value="GRADUATED">Lulus</option>
+                <option value="INACTIVE">Nonaktif</option>
+              </select>
+            </div>
+            <div class="col-md-2 text-end">
+              <div class="d-flex gap-1">
+                <button class="btn btn-outline-info btn-sm" id="btnImportStudents"
+                        title="Import dari CSV">
+                  <i class="bi bi-upload me-1"></i>Import
+                </button>
+                <button class="btn btn-outline-success btn-sm" id="btnBulkCardStudent"
+                        title="Cetak kartu massal">
+                  <i class="bi bi-printer me-1"></i>Cetak
+                </button>
+                <button class="btn btn-primary btn-sm" id="btnAddStudent">
+                  <i class="bi bi-plus-lg me-1"></i>Tambah
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-card">
+        <div class="page-card-header">
+          <h5 class="page-card-title">
+            <i class="bi bi-people me-2"></i>Daftar Siswa
+          </h5>
+          <small class="text-muted" id="studentsPaginationInfo"></small>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th width="60">Foto</th>
+                <th>NIS</th>
+                <th>Nama</th>
+                <th width="60">L/P</th>
+                <th>Kelas</th>
+                <th>Tahun Ajaran</th>
+                <th class="text-center">Status</th>
+                <th width="150" class="text-end">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="studentsTableBody">
+              <tr><td colspan="8" class="empty-row">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="page-card-header border-top">
+          <div class="d-flex justify-content-between align-items-center w-100">
+            <small class="text-muted" id="studentsInfo"></small>
+            <nav>
+              <ul class="pagination pagination-sm mb-0" id="studentsPagination"></ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 2: STAF
+         ============================================================ -->
+    <div class="tab-pane fade" id="paneStaff" role="tabpanel">
+
+      <div class="page-card mb-3">
+        <div class="page-card-body">
+          <div class="row g-2 align-items-center">
+            <div class="col-md-5">
+              <div class="input-group">
+                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" id="staffSearchInput"
+                       placeholder="Cari nama atau NIP...">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <select class="form-select" id="staffTypeFilter">
+                <option value="">Semua Tipe</option>
+                <option value="TEACHER">Guru</option>
+                <option value="LIBRARIAN">Pustakawan</option>
+                <option value="ADMIN">Administrasi</option>
+                <option value="OTHER">Lainnya</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select class="form-select" id="staffStatusFilter">
+                <option value="">Semua Status</option>
+                <option value="ACTIVE">Aktif</option>
+                <option value="INACTIVE">Nonaktif</option>
+                <option value="SUSPENDED">Ditangguhkan</option>
+              </select>
+            </div>
+            <div class="col-md-2 text-end">
+              <div class="d-flex gap-1">
+                <button class="btn btn-outline-info btn-sm" id="btnImportStaff"
+                        title="Import dari CSV">
+                  <i class="bi bi-upload me-1"></i>Import
+                </button>
+                <button class="btn btn-outline-success btn-sm" id="btnBulkCardStaff"
+                        title="Cetak kartu massal">
+                  <i class="bi bi-printer me-1"></i>Cetak
+                </button>
+                <button class="btn btn-primary btn-sm" id="btnAddStaff">
+                  <i class="bi bi-plus-lg me-1"></i>Tambah
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-card">
+        <div class="page-card-header">
+          <h5 class="page-card-title">
+            <i class="bi bi-person-badge me-2"></i>Daftar Guru & Staf
+          </h5>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>NIP</th>
+                <th>Nama</th>
+                <th>Tipe</th>
+                <th>Unit Kerja</th>
+                <th>Email</th>
+                <th class="text-center">Status</th>
+                <th width="150" class="text-end">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="staffTableBody">
+              <tr><td colspan="7" class="empty-row">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 3: KELAS
+         ============================================================ -->
+    <div class="tab-pane fade" id="paneClasses" role="tabpanel">
+
+      <div class="page-card mb-3">
+        <div class="page-card-body">
+          <div class="row g-2 align-items-center">
+            <div class="col-md-4">
+              <select class="form-select" id="classesYearFilter">
+                <option value="">Semua Tahun Ajaran</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <select class="form-select" id="classesStatusFilter">
+                <option value="ACTIVE">Aktif</option>
+                <option value="INACTIVE">Nonaktif</option>
+                <option value="">Semua Status</option>
+              </select>
+            </div>
+            <div class="col-md-4 text-end">
+              <button class="btn btn-primary w-100" id="btnAddClass">
+                <i class="bi bi-plus-lg me-1"></i>Tambah Kelas
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-card">
+        <div class="page-card-header">
+          <h5 class="page-card-title">
+            <i class="bi bi-door-open me-2"></i>Daftar Kelas
+          </h5>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Kode</th>
+                <th>Nama Kelas</th>
+                <th>Tingkat</th>
+                <th>Tahun Ajaran</th>
+                <th>Wali Kelas</th>
+                <th class="text-center">Jumlah Siswa</th>
+                <th class="text-center">Status</th>
+                <th width="120" class="text-end">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="classesTableBody">
+              <tr><td colspan="8" class="empty-row">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: FORM SISWA
+     ============================================================ -->
+<div class="modal fade" id="studentFormModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="studentFormTitle">Tambah Siswa</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="studentForm" onsubmit="return false;">
+          <div class="row g-3">
+            <!-- ==== FOTO SISWA ==== -->
+            <div class="col-md-3">
+              <label class="form-label small">Foto</label>
+              <div class="member-photo-wrap" id="studentPhotoWrap">
+                <img id="studentPhotoImg" src="" class="d-none">
+                <div class="photo-placeholder" id="studentPhotoPlaceholder">
+                  <i class="bi bi-person"></i>
+                  <div class="small text-muted mt-1">Belum ada</div>
+                </div>
+              </div>
+              <label class="btn btn-sm btn-outline-primary w-100 mt-2 mb-0">
+                <i class="bi bi-camera me-1"></i>Upload Foto
+                <input type="file" id="studentPhotoInput" accept="image/*"
+                       style="display:none" onchange="MembersPage.onPhotoFile(event,'STUDENT')">
+              </label>
+              <input type="hidden" id="studentPhotoUrl">
+              <small class="text-muted d-block mt-1" id="studentPhotoStatus"
+                     style="font-size:10px">Max 1.5MB</small>
+            </div>
+
+            <div class="col-md-9">
+              <div class="row g-2">
+                <div class="col-md-6">
+                  <label class="form-label small">Nama Lengkap <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-sm" id="studentName" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small">Jenis Kelamin <span class="text-danger">*</span></label>
+              <select class="form-select form-select-sm" id="studentGender" required>
+                <option value="">-- Pilih --</option>
+                <option value="MALE">Laki-laki</option>
+                <option value="FEMALE">Perempuan</option>
+                <option value="UNSPECIFIED">Tidak Disebutkan</option>
+              </select>
+            </div>
+
+            <!-- ===== NIS MODE ===== -->
+            <div class="col-12">
+              <label class="form-label small">Mode NIS</label>
+              <div class="btn-group w-100" role="group">
+                <input type="radio" class="btn-check" name="nisMode" id="nisModeAuto" value="AUTO" checked>
+                <label class="btn btn-outline-primary btn-sm" for="nisModeAuto">
+                  <i class="bi bi-magic me-1"></i>Auto Generate
+                </label>
+
+                <input type="radio" class="btn-check" name="nisMode" id="nisModeManual" value="MANUAL">
+                <label class="btn btn-outline-primary btn-sm" for="nisModeManual">
+                  <i class="bi bi-pencil me-1"></i>Input Manual
+                </label>
+              </div>
+            </div>
+
+            <div class="col-md-6" id="nisAutoBlock">
+              <label class="form-label small">Tanggal Masuk (untuk NIS)</label>
+              <input type="date" class="form-control form-control-sm" id="studentEnrollDate">
+              <small class="text-muted" id="nisPreviewText">
+                Format NIS: <code>----</code>
+              </small>
+            </div>
+
+            <div class="col-md-6 d-none" id="nisManualBlock">
+              <label class="form-label small">NIS <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-sm" id="studentNis">
+              <small class="text-muted">NIS dari sekolah (angka/teks)</small>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small">NISN</label>
+              <input type="text" class="form-control form-control-sm" id="studentNisn">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small">Kelas <span class="text-danger">*</span></label>
+              <select class="form-select form-select-sm" id="studentClass" required>
+                <option value="">-- Pilih Kelas --</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small">Tahun Ajaran</label>
+              <input type="text" class="form-control form-control-sm" id="studentAcademicYear"
+                     placeholder="2026/2027">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label small">Status Keanggotaan</label>
+              <select class="form-select form-select-sm" id="studentStatus">
+                <option value="ACTIVE">Aktif</option>
+                <option value="SUSPENDED">Ditangguhkan</option>
+                <option value="GRADUATED">Lulus</option>
+                <option value="INACTIVE">Nonaktif</option>
+              </select>
+            </div>
+
+            <div class="col-12">
+                  <label class="form-label small">Catatan</label>
+                  <textarea class="form-control form-control-sm" id="studentNotes" rows="2"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-primary" id="btnSaveStudent">
+          <i class="bi bi-check-lg me-1"></i>Simpan
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: FORM STAF
+     ============================================================ -->
+<div class="modal fade" id="staffFormModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staffFormTitle">Tambah Staf</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="staffForm" onsubmit="return false;">
+          <div class="row g-3">
+            <!-- ==== FOTO STAF ==== -->
+            <div class="col-md-4">
+              <label class="form-label small">Foto</label>
+              <div class="member-photo-wrap" id="staffPhotoWrap">
+                <img id="staffPhotoImg" src="" class="d-none">
+                <div class="photo-placeholder" id="staffPhotoPlaceholder">
+                  <i class="bi bi-person"></i>
+                  <div class="small text-muted mt-1">Belum ada</div>
+                </div>
+              </div>
+              <label class="btn btn-sm btn-outline-primary w-100 mt-2 mb-0">
+                <i class="bi bi-camera me-1"></i>Upload Foto
+                <input type="file" id="staffPhotoInput" accept="image/*"
+                       style="display:none" onchange="MembersPage.onPhotoFile(event,'STAFF')">
+              </label>
+              <input type="hidden" id="staffPhotoUrl">
+              <small class="text-muted d-block mt-1" id="staffPhotoStatus"
+                     style="font-size:10px">Max 1.5MB</small>
+            </div>
+
+            <div class="col-md-8">
+              <div class="mb-2">
+                <label class="form-label small">Nama Lengkap <span class="text-danger">*</span></label>
+                <input type="text" class="form-control form-control-sm" id="staffName" required>
+              </div>
+          <div class="row g-2 mb-2">
+            <div class="col-6">
+              <label class="form-label small">NIP / Kode Pegawai</label>
+              <input type="text" class="form-control form-control-sm" id="staffEmployeeNumber">
+            </div>
+            <div class="col-6">
+              <label class="form-label small">Tipe <span class="text-danger">*</span></label>
+              <select class="form-select form-select-sm" id="staffType" required>
+                <option value="">-- Pilih --</option>
+                <option value="TEACHER">Guru</option>
+                <option value="LIBRARIAN">Pustakawan</option>
+                <option value="ADMIN">Administrasi</option>
+                <option value="OTHER">Lainnya</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small">Unit Kerja / Departemen</label>
+            <input type="text" class="form-control form-control-sm" id="staffDepartment">
+          </div>
+          <div class="row g-2 mb-2">
+            <div class="col-6">
+              <label class="form-label small">Email</label>
+              <input type="email" class="form-control form-control-sm" id="staffEmail">
+            </div>
+            <div class="col-6">
+              <label class="form-label small">No. Telepon</label>
+              <input type="text" class="form-control form-control-sm" id="staffPhone">
+            </div>
+          </div>
+            <div class="mb-2">
+                <label class="form-label small">Status Keanggotaan</label>
+                <select class="form-select form-select-sm" id="staffStatus">
+                  <option value="ACTIVE">Aktif</option>
+                  <option value="INACTIVE">Nonaktif</option>
+                  <option value="SUSPENDED">Ditangguhkan</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-primary" id="btnSaveStaff">
+          <i class="bi bi-check-lg me-1"></i>Simpan
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: FORM KELAS
+     ============================================================ -->
+<div class="modal fade" id="classFormModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="classFormTitle">Tambah Kelas</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="classForm" onsubmit="return false;">
+          <div class="row g-2 mb-2">
+            <div class="col-6">
+              <label class="form-label small">Nama Kelas <span class="text-danger">*</span></label>
+              <input type="text" class="form-control form-control-sm" id="className"
+                     placeholder="Contoh: 7A" required>
+            </div>
+            <div class="col-6">
+              <label class="form-label small">Tingkat <span class="text-danger">*</span></label>
+              <div class="input-group input-group-sm">
+                <select class="form-select form-select-sm" id="classGrade" required>
+                  <option value="">-- Pilih Tingkat --</option>
+                </select>
+                <button class="btn btn-outline-primary" type="button"
+                        onclick="MembersPage.promptAddGradeLevel()"
+                        title="Tambah tingkat baru">
+                  <i class="bi bi-plus-lg"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small">Tahun Ajaran <span class="text-danger">*</span></label>
+            <input type="text" class="form-control form-control-sm" id="classYear"
+                   placeholder="2026/2027" required>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small">Wali Kelas</label>
+            <select class="form-select form-select-sm" id="classHomeroom">
+              <option value="">-- Pilih Wali Kelas (dari Guru) --</option>
+            </select>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small">Status</label>
+            <select class="form-select form-select-sm" id="classStatus">
+              <option value="ACTIVE">Aktif</option>
+              <option value="INACTIVE">Nonaktif</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-primary" id="btnSaveClass">
+          <i class="bi bi-check-lg me-1"></i>Simpan
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: CETAK MASSAL KARTU
+     ============================================================ -->
+<div class="modal fade" id="bulkCardModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="bulkCardTitle">Cetak Kartu Massal</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="bulkCardType">
+        <div class="alert alert-info py-2 small">
+          <i class="bi bi-info-circle me-1"></i>
+          Semua kartu akan digabung menjadi <strong>satu file PDF</strong>.
+          Maksimal 100 anggota per batch.
+        </div>
+
+        <div class="mb-2" id="bulkCardClassWrap">
+          <label class="form-label small">Filter Kelas (opsional)</label>
+          <select class="form-select form-select-sm" id="bulkCardClass">
+            <option value="">Semua Kelas</option>
+          </select>
+        </div>
+
+        <div class="mb-2" id="bulkCardStaffTypeWrap" style="display:none">
+          <label class="form-label small">Filter Tipe (opsional)</label>
+          <select class="form-select form-select-sm" id="bulkCardStaffType">
+            <option value="">Semua Tipe</option>
+            <option value="TEACHER">Guru</option>
+            <option value="LIBRARIAN">Pustakawan</option>
+            <option value="ADMIN">Administrasi</option>
+            <option value="OTHER">Lainnya</option>
+          </select>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label small">Filter Status</label>
+          <select class="form-select form-select-sm" id="bulkCardStatus">
+            <option value="ACTIVE">Hanya Aktif</option>
+            <option value="">Semua Status</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-success" id="btnGenerateBulkCard">
+          <i class="bi bi-printer me-1"></i>Generate PDF
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: IMPORT DATA (Siswa / Staf)
+     ============================================================ -->
+<div class="modal fade" id="importModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="importModalTitle">Import Data</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+
+        <!-- ===== STEP 1: SUMBER DATA ===== -->
+        <div id="importStep1">
+          <input type="hidden" id="importTargetType">
+
+          <div class="alert alert-info small py-2">
+            <i class="bi bi-info-circle me-1"></i>
+            <strong id="importFormatHint">Format CSV/TSV</strong>
+            <div id="importFormatDetail" class="mt-1" style="font-family:monospace;font-size:11px"></div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">Mode Import</label>
+              <div class="btn-group w-100" role="group">
+                <input type="radio" class="btn-check" name="importMode"
+                       id="importModeInsert" value="INSERT" checked>
+                <label class="btn btn-outline-primary btn-sm" for="importModeInsert">
+                  <i class="bi bi-plus-circle me-1"></i>Tambah Baru
+                </label>
+                <input type="radio" class="btn-check" name="importMode"
+                       id="importModeUpsert" value="UPSERT">
+                <label class="btn btn-outline-primary btn-sm" for="importModeUpsert">
+                  <i class="bi bi-arrow-repeat me-1"></i>Update/Tambah
+                </label>
+              </div>
+              <small class="text-muted d-block mt-1">
+                Mode <strong>Update/Tambah</strong>: jika NIS/NIP/email sudah ada, akan diupdate.
+              </small>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">Sumber Data</label>
+              <div class="btn-group w-100" role="group">
+                <input type="radio" class="btn-check" name="importSource"
+                       id="importSourcePaste" value="PASTE" checked>
+                <label class="btn btn-outline-secondary btn-sm" for="importSourcePaste">
+                  <i class="bi bi-clipboard me-1"></i>Paste
+                </label>
+                <input type="radio" class="btn-check" name="importSource"
+                       id="importSourceFile" value="FILE">
+                <label class="btn btn-outline-secondary btn-sm" for="importSourceFile">
+                  <i class="bi bi-file-earmark-arrow-up me-1"></i>Upload File
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Paste Area -->
+          <div id="importPasteArea">
+            <label class="form-label small">Paste data dari Excel/Google Sheets (CSV/TSV):</label>
+            <textarea class="form-control form-control-sm" id="importPasteText"
+                      rows="8" placeholder="Klik di sini lalu Ctrl+V untuk paste"
+                      style="font-family:monospace;font-size:12px"></textarea>
+          </div>
+
+          <!-- Upload Area -->
+          <div id="importUploadArea" style="display:none">
+            <label class="form-label small">Upload file CSV:</label>
+            <div class="border rounded p-4 text-center bg-light" id="importDropZone">
+              <i class="bi bi-cloud-arrow-up" style="font-size:32px;color:#9ca3af"></i>
+              <div class="mt-2 small">
+                <label class="btn btn-sm btn-primary mb-0">
+                  Pilih File CSV
+                  <input type="file" id="importFileInput" accept=".csv,.txt"
+                         style="display:none" onchange="MembersPage.onImportFile(event)">
+                </label>
+              </div>
+              <div class="text-muted small mt-2" id="importFileName"></div>
+            </div>
+          </div>
+
+          <div class="mt-3 text-end">
+            <button class="btn btn-primary" onclick="MembersPage.parseImportData()">
+              <i class="bi bi-arrow-right me-1"></i>Parse & Preview
+            </button>
+          </div>
+        </div>
+
+        <!-- ===== STEP 2: PREVIEW ===== -->
+        <div id="importStep2" style="display:none">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="mb-0">Preview Data (<span id="importPreviewCount">0</span> baris)</h6>
+            <button class="btn btn-sm btn-outline-secondary" onclick="MembersPage.backToImportStep1()">
+              <i class="bi bi-arrow-left me-1"></i>Kembali
+            </button>
+          </div>
+
+          <div class="alert alert-warning small py-2" id="importPreviewWarn" style="display:none">
+          </div>
+
+          <div class="table-responsive" style="max-height:400px;border:1px solid #e5e7eb;border-radius:8px">
+            <table class="table table-sm table-hover mb-0" id="importPreviewTable">
+              <thead class="table-light" style="position:sticky;top:0;z-index:2"></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div class="mt-3 d-flex justify-content-end gap-2">
+            <button class="btn btn-secondary" onclick="MembersPage.backToImportStep1()">
+              Batal
+            </button>
+            <button class="btn btn-success" id="btnExecuteImport"
+                    onclick="MembersPage.executeImport()">
+              <i class="bi bi-check-lg me-1"></i>Import Sekarang (<span id="importReadyCount">0</span>)
+            </button>
+          </div>
+        </div>
+
+        <!-- ===== STEP 3: HASIL ===== -->
+        <div id="importStep3" style="display:none">
+          <div class="text-center py-3">
+            <div id="importResultIcon" style="font-size:56px"></div>
+            <h4 class="mt-2 mb-1" id="importResultTitle">Import Selesai</h4>
+            <p class="text-muted" id="importResultSubtitle"></p>
+          </div>
+
+          <div class="row g-2 mb-3">
+            <div class="col-md-3">
+              <div class="border rounded p-2 text-center">
+                <div class="fw-bold fs-5" id="importStatTotal">0</div>
+                <div class="small text-muted">Total</div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="border rounded p-2 text-center text-success">
+                <div class="fw-bold fs-5" id="importStatSuccess">0</div>
+                <div class="small text-muted">Berhasil</div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="border rounded p-2 text-center text-danger">
+                <div class="fw-bold fs-5" id="importStatFailed">0</div>
+                <div class="small text-muted">Gagal</div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="border rounded p-2 text-center text-info">
+                <div class="fw-bold fs-5" id="importStatUpdated">0</div>
+                <div class="small text-muted">Update</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="importGeneratedPasswords" style="display:none">
+            <div class="alert alert-info">
+              <h6 class="mb-2"><i class="bi bi-key me-1"></i>Password Awal User Baru</h6>
+              <div class="table-responsive" style="max-height:200px;overflow-y:auto">
+                <table class="table table-sm table-bordered mb-0">
+                  <thead class="table-light">
+                    <tr><th>Email</th><th>Password</th></tr>
+                  </thead>
+                  <tbody id="importPwdTableBody"></tbody>
+                </table>
+              </div>
+              <small class="text-muted d-block mt-2">
+                <i class="bi bi-info-circle me-1"></i>
+                Catat password ini. User wajib ganti saat login pertama.
+              </small>
+            </div>
+          </div>
+
+          <div id="importFailedList" style="display:none">
+            <h6 class="mt-3">Detail Error</h6>
+            <div class="table-responsive" style="max-height:250px;overflow-y:auto;border:1px solid #e5e7eb;border-radius:8px">
+              <table class="table table-sm mb-0">
+                <thead class="table-light" style="position:sticky;top:0">
+                  <tr><th width="60">Baris</th><th>Pesan</th></tr>
+                </thead>
+                <tbody id="importFailedTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="mt-3 text-end">
+            <button class="btn btn-primary" onclick="MembersPage.finishImport()">
+              <i class="bi bi-check-circle me-1"></i>Selesai
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

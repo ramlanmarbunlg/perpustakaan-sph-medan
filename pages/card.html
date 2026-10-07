@@ -1,0 +1,355 @@
+<!--
+  PageCard.html
+  Template kartu anggota ID-1 (85.6 x 54 mm) dengan JsBarcode.
+-->
+<div id="cardPrintPage">
+
+  <!-- Toolbar aksi (hidden saat print) -->
+  <div class="card-toolbar no-print">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <div>
+        <h5 class="mb-0"><i class="bi bi-credit-card-2-front me-2"></i>Preview Kartu Anggota</h5>
+        <small class="text-muted">
+          Ukuran ID-1 (85.6 × 54 mm) • Presisi untuk cetak
+        </small>
+      </div>
+      <div class="d-flex gap-2">
+        <select class="form-select form-select-sm" id="cardPrintCopies" style="width:200px">
+          <option value="2">2 kartu / halaman</option>
+          <option value="4" selected>4 kartu / halaman</option>
+          <option value="6">6 kartu / halaman</option>
+          <option value="8">8 kartu / halaman</option>
+          <option value="10">10 kartu / halaman</option>
+        </select>
+        <button class="btn btn-primary btn-sm" onclick="MembersPage.doPrintCard()">
+          <i class="bi bi-printer me-1"></i>Print / Save PDF
+        </button>
+        <button class="btn btn-outline-secondary btn-sm" onclick="MembersPage.closeCardPreview()">
+          <i class="bi bi-x-lg me-1"></i>Tutup
+        </button>
+      </div>
+    </div>
+    <div class="alert alert-info small py-2 mt-2 mb-0 no-print">
+      <i class="bi bi-info-circle me-1"></i>
+      <strong>Tips:</strong> Pada dialog print, pilih <strong>"Save as PDF"</strong>,
+      margin <strong>None</strong> atau <strong>Minimal</strong>, dan
+      aktifkan <strong>"Background graphics"</strong> untuk hasil maksimal.
+      Ukuran kertas rekomendasi: <strong>A4</strong> (85.6 × 54 mm per kartu).
+    </div>
+  </div>
+
+  <!-- Area kartu yang akan di-print -->
+  <div id="cardPrintArea" class="card-print-area">
+    <!-- Kartu di-generate oleh JS -->
+  </div>
+</div>
+
+<!-- ============================================================
+     CSS khusus print (ID-1 presisi)
+     ============================================================ -->
+<style>
+  /* Setting halaman cetak A4 dengan margin kecil */
+  @page {
+    size: A4 portrait;
+    margin: 8mm;
+  }
+
+  /* ============================================================
+   * AREA PREVIEW
+   * ============================================================ */
+    .card-print-area {
+    padding: 20px;
+    background: #f0f0f0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 85.6mm);
+    gap: 4mm;
+    justify-content: center;
+    max-width: 100%;
+  }
+
+  /* ============================================================
+   * KARTU ID-1 (85.6 × 54 mm) — presisi
+   * ============================================================ */
+  .id-card {
+    width: 85.6mm;
+    height: 54mm;
+    position: relative;
+    background: #fff;
+    border-radius: 2mm;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    page-break-inside: avoid;
+    box-sizing: border-box;
+  }
+
+  /* === DEPAN === */
+  .id-card-front {
+    background: linear-gradient(180deg, #ffffff 0%, #f0f7ff 100%);
+  }
+
+  .id-card-front .card-header-band {
+    background: linear-gradient(90deg, #1e40af, #4285f4);
+    color: #fff;
+    padding: 1.8mm 2.5mm;
+    display: flex;
+    align-items: center;
+    gap: 2mm;
+    height: 15mm;
+    box-sizing: border-box;
+  }
+  .id-card-front .card-logo {
+    width: 11mm;
+    height: 11mm;
+    object-fit: contain;
+    background: #fff;
+    border-radius: 1.5mm;
+    padding: 0.6mm;
+    flex-shrink: 0;
+  }
+  .id-card-front .card-header-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .id-card-front .school-name {
+    font-size: 7pt;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: 0.2px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .id-card-front .card-title {
+    font-size: 5.5pt;
+    line-height: 1.2;
+    opacity: 0.95;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+  .id-card-front .card-subtitle {
+    font-size: 4.3pt;
+    line-height: 1.1;
+    margin-top: 0.3mm;
+    opacity: 0.9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .id-card-front .card-body-content {
+    flex: 1;
+    display: flex;
+    padding: 2mm 2.5mm;
+    gap: 2.5mm;
+    align-items: flex-start;
+    box-sizing: border-box;
+  }
+
+  .id-card-front .card-photo {
+    width: 17mm;
+    height: 22mm;
+    border: 0.3mm solid #4285f4;
+    border-radius: 1mm;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .id-card-front .card-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .id-card-front .card-photo-placeholder {
+    color: #999;
+    font-size: 5pt;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .id-card-front .card-info {
+    flex: 1;
+    min-width: 0;
+    font-size: 6pt;
+    line-height: 1.45;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3mm;
+  }
+  .id-card-front .info-row {
+    display: flex;
+    gap: 1mm;
+  }
+  .id-card-front .info-label {
+    color: #6b7280;
+    min-width: 15mm;
+    font-weight: 500;
+  }
+  .id-card-front .info-value {
+    font-weight: 600;
+    color: #1f2937;
+    flex: 1;
+    word-break: break-word;
+  }
+  .id-card-front .info-value.big {
+    font-size: 6.8pt;
+    color: #1e40af;
+    font-family: 'Consolas', 'Courier New', monospace;
+    letter-spacing: 0.3px;
+  }
+
+  /* Footer: barcode kiri + ttd kanan */
+  .id-card-front .card-footer {
+    padding: 1.5mm 2.5mm 1mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    background: #f8fafc;
+    border-top: 0.2mm solid #e5e7eb;
+    gap: 2mm;
+    box-sizing: border-box;
+  }
+  .id-card-front .footer-barcode {
+    flex-shrink: 0;
+    text-align: center;
+  }
+  .id-card-front .footer-barcode svg {
+    display: block;
+    height: 7mm;
+    width: auto;
+  }
+  .id-card-front .footer-barcode .barcode-text {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 4pt;
+    letter-spacing: 0.5px;
+    color: #1f2937;
+    margin-top: 0.3mm;
+  }
+
+  .id-card-front .footer-ttd {
+    text-align: right;
+    font-size: 4.5pt;
+    line-height: 1.3;
+    color: #4b5563;
+    flex-shrink: 0;
+  }
+  .id-card-front .footer-ttd .ttd-city-date {
+    margin-bottom: 0.3mm;
+  }
+  .id-card-front .footer-ttd .ttd-label {
+    margin-bottom: 4mm;
+  }
+  .id-card-front .footer-ttd .ttd-name {
+    font-weight: 700;
+    font-size: 5pt;
+    color: #1f2937;
+    border-top: 0.2mm solid #6b7280;
+    padding-top: 0.3mm;
+    display: inline-block;
+    min-width: 26mm;
+  }
+
+  /* === BELAKANG === */
+  .id-card-back {
+    background: linear-gradient(135deg, #1e40af 0%, #4285f4 100%);
+    color: #fff;
+    padding: 2.5mm 3mm;
+    box-sizing: border-box;
+  }
+  .id-card-back .back-header {
+    text-align: center;
+    font-size: 7pt;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    padding-bottom: 1mm;
+    border-bottom: 0.3mm solid rgba(255, 255, 255, 0.4);
+    margin-bottom: 1.5mm;
+    text-transform: uppercase;
+  }
+  .id-card-back .rules-list {
+    font-size: 5pt;
+    line-height: 1.4;
+    padding-left: 3mm;
+    margin: 0;
+  }
+  .id-card-back .rules-list li {
+    margin-bottom: 0.6mm;
+  }
+  .id-card-back .back-footer {
+    position: absolute;
+    bottom: 1.5mm;
+    left: 3mm;
+    right: 3mm;
+    text-align: center;
+    font-size: 4.2pt;
+    opacity: 0.9;
+    border-top: 0.2mm solid rgba(255, 255, 255, 0.3);
+    padding-top: 0.8mm;
+  }
+
+  /* ============================================================
+   * PRINT MODE — grid layout A4
+   * ============================================================ */
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 8mm;
+    }
+
+    body > *:not(#printRoot) {
+      display: none !important;
+    }
+
+    #printRoot {
+      display: block !important;
+      position: static !important;
+      width: 100% !important;
+      height: auto !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      background: #fff !important;
+    }
+
+    /* Container grid */
+    #printRoot .card-print-area {
+      display: grid !important;
+      grid-template-columns: repeat(2, 85.6mm) !important;
+      gap: 3mm !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      background: transparent !important;
+      justify-content: center !important;
+      align-items: flex-start !important;
+    }
+
+    /* Kartu dengan border panduan potong */
+    #printRoot .id-card {
+      box-shadow: none !important;
+      border: 0.25mm dashed #cccccc !important;
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+      display: flex !important;
+      width: 85.6mm !important;
+      height: 54mm !important;
+    }
+
+    /* Kartu berpasangan (depan + belakang) — modifikasi grid */
+    /* Setiap genap (belakang) tidak bisa dipisahkan dari ganjil (depan) */
+    #printRoot .id-card:nth-child(2n-1) {
+      /* Kartu depan — gabung dengan kartu belakang di baris yang sama */
+    }
+    #printRoot .id-card:nth-child(2n) {
+      /* Kartu belakang */
+    }
+  }
+
+</style>

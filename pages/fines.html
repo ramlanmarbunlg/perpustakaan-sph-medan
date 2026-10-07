@@ -1,0 +1,353 @@
+<div id="finesPage">
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+    <ul class="nav nav-tabs mb-0" style="border-bottom:none">
+      <li class="nav-item">
+        <button class="nav-link active" id="tabOutstanding" data-bs-toggle="tab"
+                data-bs-target="#paneOutstanding" type="button">
+          <i class="bi bi-exclamation-circle me-1"></i>Daftar Tunggakan
+          <span class="badge bg-secondary ms-1" id="tabOutstandingCount">0</span>
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" id="tabTransactions" data-bs-toggle="tab"
+                data-bs-target="#paneTransactions" type="button">
+          <i class="bi bi-clock-history me-1"></i>Riwayat Transaksi
+        </button>
+      </li>
+    </ul>
+    <button class="btn btn-sm btn-danger" id="btnAddFineCharge">
+      <i class="bi bi-plus-lg me-1"></i>Buat Tagihan Manual
+    </button>
+  </div>
+
+  <div class="tab-content">
+
+    <!-- ===== TAB 1: TUNGGAKAN ===== -->
+    <div class="tab-pane fade show active" id="paneOutstanding" role="tabpanel">
+
+      <!-- Summary cards -->
+      <div class="row g-3 mb-3" id="finesSummaryRow"></div>
+
+      <div class="page-card">
+        <div class="page-card-header">
+          <h5 class="page-card-title">
+            <i class="bi bi-list-ul me-2"></i>Anggota dengan Tunggakan
+          </h5>
+          <button class="btn btn-sm btn-outline-secondary" id="btnRefreshOutstanding">
+            <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+          </button>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Nama</th>
+                <th>NIS/NIP</th>
+                <th>Tipe</th>
+                <th>Kelas/Unit</th>
+                <th class="text-end">Saldo</th>
+                <th width="200" class="text-end">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="outstandingTableBody">
+              <tr><td colspan="6" class="empty-row">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TAB 2: RIWAYAT ===== -->
+    <div class="tab-pane fade" id="paneTransactions" role="tabpanel">
+      <div class="page-card mb-3">
+        <div class="page-card-body">
+          <div class="row g-2">
+            <div class="col-md-3">
+              <div class="input-group input-group-sm">
+                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" id="txSearchInput"
+                       placeholder="Cari nama/NIS/no transaksi...">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <select class="form-select form-select-sm" id="txTypeFilter">
+                <option value="">Semua Tipe</option>
+                <option value="CHARGE">Tagihan</option>
+                <option value="PAYMENT">Pembayaran</option>
+                <option value="WAIVER">Penghapusan</option>
+                <option value="ADJUSTMENT">Penyesuaian</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <input type="date" class="form-control form-control-sm" id="txFromDate">
+            </div>
+            <div class="col-md-2">
+              <input type="date" class="form-control form-control-sm" id="txToDate">
+            </div>
+            <div class="col-md-3 d-flex gap-1">
+              <button class="btn btn-sm btn-primary flex-fill" id="btnFilterTx">
+                <i class="bi bi-funnel me-1"></i>Filter
+              </button>
+              <button class="btn btn-sm btn-outline-secondary" onclick="FinesPage.resetTxFilter()">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page-card">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>No. Transaksi</th>
+                <th>Tanggal</th>
+                <th>Anggota</th>
+                <th>Tipe</th>
+                <th class="text-end">Jumlah</th>
+                <th>Metode</th>
+                <th>Catatan</th>
+              </tr>
+            </thead>
+            <tbody id="txTableBody">
+              <tr><td colspan="7" class="empty-row">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="page-card-header border-top">
+          <div class="d-flex justify-content-between align-items-center w-100">
+            <small class="text-muted" id="txInfo"></small>
+            <nav><ul class="pagination pagination-sm mb-0" id="txPagination"></ul></nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: DETAIL SALDO ANGGOTA
+     ============================================================ -->
+<div class="modal fade" id="memberBalanceModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="memberBalanceTitle">Detail Saldo Denda</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="memberBalanceBody">
+        <div class="text-center py-4"><div class="spinner-border text-primary"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: PEMBAYARAN
+     ============================================================ -->
+<div class="modal fade" id="paymentModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Catat Pembayaran Denda</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info py-2 small mb-3">
+          <div><strong>Anggota:</strong> <span id="payMemberName">-</span></div>
+          <div><strong>Saldo saat ini:</strong> <span id="payMemberBalance" class="text-danger fw-bold">-</span></div>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label small">Jumlah Bayar <span class="text-danger">*</span></label>
+          <div class="input-group input-group-sm">
+            <span class="input-group-text">Rp</span>
+            <input type="number" class="form-control" id="payAmount" min="1" step="500">
+          </div>
+          <div class="mt-1">
+            <button type="button" class="btn btn-sm btn-outline-secondary me-1"
+                    onclick="FinesPage.setPayFull()">Bayar Lunas</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary"
+                    onclick="FinesPage.setPayHalf()">Setengah</button>
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label small">Metode Pembayaran <span class="text-danger">*</span></label>
+          <select class="form-select form-select-sm" id="payMethod">
+            <option value="CASH">Tunai</option>
+            <option value="TRANSFER">Transfer</option>
+            <option value="OTHER">Lainnya</option>
+          </select>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label small">No. Referensi (opsional)</label>
+          <input type="text" class="form-control form-control-sm" id="payRef"
+                 placeholder="No. kuitansi / bukti transfer">
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label small">Catatan</label>
+          <textarea class="form-control form-control-sm" id="payNotes" rows="2"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-success" id="btnSubmitPayment">
+          <i class="bi bi-cash-coin me-1"></i>Proses Pembayaran
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: WAIVER (PENGHAPUSAN)
+     ============================================================ -->
+<div class="modal fade" id="waiverModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Penghapusan Denda (Waiver)</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-warning py-2 small mb-3">
+          <i class="bi bi-exclamation-triangle me-1"></i>
+          Penghapusan denda akan <strong>mengurangi saldo</strong> tanpa pembayaran.
+          Gunakan hanya untuk kebijakan khusus.
+        </div>
+
+        <div class="alert alert-light py-2 small mb-3">
+          <div><strong>Anggota:</strong> <span id="waiveMemberName">-</span></div>
+          <div><strong>Saldo saat ini:</strong> <span id="waiveMemberBalance" class="text-danger fw-bold">-</span></div>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label small">Jumlah Dihapus <span class="text-danger">*</span></label>
+          <div class="input-group input-group-sm">
+            <span class="input-group-text">Rp</span>
+            <input type="number" class="form-control" id="waiveAmount" min="1" step="500">
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label small">Alasan Penghapusan <span class="text-danger">*</span></label>
+          <textarea class="form-control form-control-sm" id="waiveReason" rows="3"
+                    placeholder="Contoh: Kebijakan sekolah untuk siswa kurang mampu"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-warning" id="btnSubmitWaiver">
+          <i class="bi bi-check-lg me-1"></i>Hapus Denda
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: TAGIHAN MANUAL (CHARGE)
+     ============================================================ -->
+<div class="modal fade" id="chargeModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Buat Tagihan Manual</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-light py-2 small mb-3">
+          <div><strong>Anggota:</strong> <span id="chargeMemberName">-</span></div>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label small">Mode Tagihan <span class="text-danger">*</span></label>
+          <div class="btn-group w-100" role="group">
+            <input type="radio" class="btn-check" name="chargeMode" id="chargeModeFixed" value="FIXED" checked>
+            <label class="btn btn-outline-primary btn-sm" for="chargeModeFixed">
+              Nominal Tetap
+            </label>
+            <input type="radio" class="btn-check" name="chargeMode" id="chargeModeBook" value="BOOK_PRICE">
+            <label class="btn btn-outline-primary btn-sm" for="chargeModeBook">
+              Harga Buku
+            </label>
+          </div>
+        </div>
+
+        <div class="mb-2" id="chargeAmountBlock">
+          <label class="form-label small">Nominal <span class="text-danger">*</span></label>
+          <div class="input-group input-group-sm">
+            <span class="input-group-text">Rp</span>
+            <input type="number" class="form-control" id="chargeAmount" min="1" step="1000">
+          </div>
+        </div>
+
+        <div class="mb-2" id="chargeReturnBlock" style="display:none">
+          <label class="form-label small">Pilih Pengembalian (untuk ambil harga buku)</label>
+          <select class="form-select form-select-sm" id="chargeReturnId">
+            <option value="">-- Pilih Return --</option>
+          </select>
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label small">Deskripsi <span class="text-danger">*</span></label>
+          <textarea class="form-control form-control-sm" id="chargeDesc" rows="2"
+                    placeholder="Contoh: Denda buku hilang - Matematika Kelas 7"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-danger" id="btnSubmitCharge">
+          <i class="bi bi-plus-circle me-1"></i>Buat Tagihan
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: BUAT TAGIHAN MANUAL (pilih anggota dulu)
+     ============================================================ -->
+<div class="modal fade" id="chargeMemberModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Pilih Anggota</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info small py-2">
+          <i class="bi bi-info-circle me-1"></i>
+          Cari anggota yang akan ditagihkan denda.
+        </div>
+
+        <div class="btn-group w-100 mb-3" role="group">
+          <input type="radio" class="btn-check" name="chargeBorrowerType"
+                 id="chgBtStudent" value="STUDENT" checked>
+          <label class="btn btn-outline-primary btn-sm" for="chgBtStudent">
+            <i class="bi bi-people me-1"></i>Siswa
+          </label>
+          <input type="radio" class="btn-check" name="chargeBorrowerType"
+                 id="chgBtStaff" value="STAFF">
+          <label class="btn btn-outline-primary btn-sm" for="chgBtStaff">
+            <i class="bi bi-person-badge me-1"></i>Guru/Staf
+          </label>
+        </div>
+
+        <div class="position-relative">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" id="chargeMemberSearch"
+                   placeholder="Cari nama atau NIS/NIP..." autocomplete="off">
+          </div>
+          <div id="chargeMemberResults" class="search-dropdown d-none"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
