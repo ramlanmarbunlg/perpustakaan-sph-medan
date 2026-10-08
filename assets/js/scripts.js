@@ -3922,7 +3922,7 @@ const MembersPage = {
     const rules = [
       'Kartu ini wajib dibawa setiap kunjungan, peminjaman, dan pengembalian buku.',
       'Kartu tidak boleh dipinjamkan kepada orang lain.',
-      'Peminjaman maksimal 3 buku selama 7 hari.',
+      'Peminjaman maksimal 2 buku selama 3 hari.',
       'Keterlambatan pengembalian dikenakan denda Rp 500/hari.',
       'Kerusakan/kehilangan buku menjadi tanggung jawab anggota.',
       'Kartu yang hilang harus segera dilaporkan ke pustakawan.'
